@@ -1,52 +1,63 @@
+<div style="height: 10px; clear: both;"></div>
+
 <div align="center">
-	<img src="https://i.hd-r.cn/6ce52e5724fae609444b5b48bdc4accb.png">
-	<p align="center">
-		<a href="https://v3.vuejs.org/" target="_blank">
-			<img src="https://img.shields.io/badge/vue.js-vue3.x-green" alt="vue">
-		</a>
-		<a href="https://element-plus.gitee.io/#/zh-CN/component/changelog" target="_blank">
-			<img src="https://img.shields.io/badge/element--plus-%3E1.0.0-blue" alt="element plus">
-		</a>
-		<a href="https://www.tslang.cn/" target="_blank">
-	    <img src="https://img.shields.io/badge/typescript-%3E4.0.0-blue" alt="typescript">
-	  </a>
-		<a href="https://vitejs.dev/" target="_blank">
-		  <img src="https://img.shields.io/badge/vite-%3E2.0.0-yellow" alt="vite">
-		</a>
-		<a href="https://gitee.com/lyt-top/vue-next-admin/blob/master/LICENSE" target="_blank">
-		  <img src="https://img.shields.io/badge/license-MIT-success" alt="license">
-		</a>
-	</p>
-	<p>&nbsp;</p>
+
+![易软通logo](./images/logo.png)
+
+[![码云Gitee](https://gitee.com/yiruantong/open-wms/badge/star.svg?theme=blue)](https://gitee.com/yiruantong/open-wms)
+[![GitHub](https://img.shields.io/github/stars/yiruantong/open-wms.svg?style=social&label=Stars)](https://gitee.com/yiruantong/open-wms)
+[![License](https://img.shields.io/badge/License-MIT-blue.svg)](https://gitee.com/yiruantong/open-wms/blob/master/LICENSE)
+[![使用IntelliJ IDEA开发维护](https://img.shields.io/badge/IntelliJ%20IDEA-提供支持-blue.svg)](https://www.jetbrains.com/?from=RuoYi-Vue-Plus)
+<br>
+[![RuoYi-Vue-Plus](https://img.shields.io/badge/RuoYi_Vue_Plus-5.1.0-success.svg)](https://gitee.com/yiruantong/open-wms)
+[![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.0-blue.svg)]()
+[![JDK-17](https://img.shields.io/badge/JDK-17-green.svg)]()
+[![JDK-19](https://img.shields.io/badge/JDK-19-green.svg)]()
+
+[官网](https://www.wms.kim/) |
+[在线体验](http://open.wms.kim) |
+[帮助文档](https://www.yuque.com/xietianbao/xc91gm) |
+[技术社区](https://gitee.com/yiruantong/open-wms/issues)
+
+[comment]: <> ([宽屏预览]&#40;https://gitee.com/yiruantong/open-wms/blob/master/README.md&#41;)
 </div>
 
-#### 💝 长期赞助商
 
-<a href="http://www.ccflow.org/" target="_blank">
-	<img src="./src/assets/ccflowRightNextAdmin.png" width="50%" height="70px">
-</a>
+- - -
 
-#### 🌈 介绍
+# 易软通开源免费openWMS系统简介
 
-基于 vue3.x + CompositionAPI setup 语法糖 + typescript + vite + element plus + vue-router-next + pinia 技术，适配手机、平板、pc 的后台开源免费模板，希望减少工作量，帮助大家实现快速开发。
+> 易软通openWMS是采用RuoYi-Vue-Plus作为后端Java框架，已做调整不兼容原框架；前端采用Vue3 + VueX + Vue-Router + Element Plus + Pinia + TypeScript + Axios + Vite为前端框架。
 
-#### ⛱️ 线上预览
+> 项目代码、文档均开源免费可商用 遵循开源协议在项目中保留开源协议文件即可
 
-- vue3.x 版本预览（vue-next-admin）<a href="https://lyt-top.gitee.io/vue-next-admin-preview/#/login" target="_blank">https://lyt-top.gitee.io/vue-next-admin-preview/#/login</a>
-- vue2.x 版本预览（vue-prev-admin）<a href="https://lyt-top.gitee.io/vue-prev-admin-preview/#/login" target="_blank">https://lyt-top.gitee.io/vue-prev-admin-preview/#/login</a>
-- vue3.x + uni-app 商城 H5（vue-next-admin-shop）<a href="https://lyt-top.gitee.io/vue-next-admin-shop-preview" target="_blank">https://lyt-top.gitee.io/vue-next-admin-shop-preview</a>
+> 易软通WMS系统，名称中“易”代表便捷、“软”代表软件、“通”代表畅通无阻，整体寓意系统操作简便、信息流畅、功能全面。在WMS（Warehouse Management System，仓库管理系统）行业中，易软通商标名体现了我们致力于为企业提供高效、智能、易用的仓储管理解决方案。
+>
+> 易软通WMS系统，不仅是一套管理工具，更是企业物流与仓储管理的智能伙伴。它像其名称所寓意的那样，帮助企业打通仓储管理各个环节，实现信息无缝对接与流程高效协同。系统实时监控库存状态、货物动向及作业进度，为企业提供精准的数据分析和可靠的决策支持。
+>
+> 易软通WMS系统的强大功能，助力企业轻松应对多样化的物流挑战。无论是日常订单的高效处理，还是突发状况的快速响应，系统都能灵活适配、稳定运行，保障企业仓储物流始终顺畅高效。
+>
+> 易软通WMS系统，凭借其出色的易用性、灵活的适应性和稳定的性能，已成为WMS领域中广受信赖的选择。它始终关注行业发展趋势，持续推动企业仓储管理数字化、智能化转型。选择易软通WMS系统，就是选择一位高效、可靠、智能的合作伙伴，助您在日益激烈的市场竞争中稳步前行。
 
-#### 💒 代码仓库
+## PC端演示地址
+> WMS系统: http://open.wms.kim <br/>
+> 账号/密码：请点击star后，获取作者账号密码 <br/>
 
-- vue3.x 版本 <a href="https://gitee.com/lyt-top/vue-next-admin" target="_blank">https://gitee.com/lyt-top/vue-next-admin</a>
-- vue2.x 版本 <a href="https://gitee.com/lyt-top/vue-next-admin/tree/vue-prev-admin" target="_blank">https://gitee.com/lyt-top/vue-next-admin/tree/vue-prev-admin</a>
+## 帮助文档
+> 易软通openWMS帮助文档: https://www.yuque.com/xietianbao/xc91gm <br/>
 
-#### 🚧 安装 cnpm、yarn
+## 🌈 当前代码仓库是易软通openWMS前端UI
 
-- 复制代码(桌面 cmd 运行) `npm install -g cnpm --registry=https://registry.npm.taobao.org`
-- 复制代码(桌面 cmd 运行) `npm install -g yarn`
+基于 vue3.x + CompositionAPI setup 语法糖 + typescript + vite + element plus + vue-router-next + pinia 技术，希望给大家减少工作量，帮助大家实现快速开发仓储管理系统，让开发更轻松。
 
-#### 🏭 环境支持
+
+## 💒 代码仓库
+
+- 开源openWMS前端UI <a href="https://gitee.com/yiruantong/open-wms-ui" target="_blank">https://gitee.com/yiruantong/open-wms-ui</a>
+- 开源openWMS后端Java <a href="https://gitee.com/yiruantong/open-wms" target="_blank">https://gitee.com/yiruantong/open-wms</a>
+
+
+## 🏭 环境支持
 
 | Edge      | Firefox      | Chrome      | Safari      |
 | --------- | ------------ | ----------- | ----------- |
@@ -54,98 +65,38 @@
 
 > 由于 Vue3 不再支持 IE11，故而 ElementPlus 也不支持 IE11 及之前版本。
 
-#### ⚡ 使用说明
+## ⚡ 使用说明
 
-建议使用 cnpm，因为 yarn 有时会报错。<a href="http://nodejs.cn/" target="_blank">node 版本 > 14.18+/16+</a>
+建议使用 pnpm <a href="http://nodejs.cn/" target="_blank">node 版本 > 14.18+/16+</a>
 
 > Vite 不再支持 Node 12 / 13 / 15，因为上述版本已经进入了 EOL 阶段。现在你必须使用 Node 14.18+ / 16+ 版本。
 
 ```bash
 # 克隆项目
-git clone https://gitee.com/lyt-top/vue-next-admin.git
+git clone https://gitee.com/yiruantong/open-wms-ui
 
 # 进入项目
-cd vue-next-admin
+cd open-wms-ui
 
 # 安装依赖
-cnpm install
+npm install
 
 # 运行项目
-cnpm run dev
+npm run dev
 
 # 打包发布
-cnpm run build
+npm run build
 ```
 
 #### 📚 开发文档
 
-- 查看开发文档：<a href="https://lyt-top.gitee.io/vue-next-admin-doc-preview" target="_blank">vue-next-admin-doc</a>
+- 查看开发文档：<a href="https://www.yuque.com/xietianbao/xc91gm" target="_blank">https://www.yuque.com/xietianbao/xc91gm</a>
 
-#### 💯 学习交流加 QQ 群
 
-> 1 - 4 交流群已满，请加 vue-next-admin 交流群 5
+# 企业版WMS链接地址
+> [https://www.wms.kim/enterprise-wms](https://www.wms.kim/enterprise-wms/)
 
-群号：556254895
-
-其它交流群请查看文档首页 [vueNextAdmin 解疑问](https://lyt-top.gitee.io/vue-next-admin-doc-preview/)
-
-#### 💒 集成后端
-
-- <a target="_blank" href="https://gitee.com/zuohuaijun/Admin.NET">@zuohuaijun Admin.NET</a>
-- <a target="_blank" href="https://github.com/PandaGoAdmin/PandaX">@熊猫 PandaGoAdmin</a>
-- <a target="_blank" href="https://toscode.gitee.com/GionConnection/gopro_free">@甜蜜蜜 GoPro 平台</a>
-- <a target="_blank" href="https://gitee.com/GionConnection/niupi-free">@甜蜜蜜 NiuPi 平台</a>
-- <a target="_blank" href="https://gitee.com/tiger1103/gfast/tree/os-v3/">@游子 GFast-V3</a>
-- <a target="_blank" href="https://gitee.com/diygw/diygw-ui-php/">@diygw.com gw-ui-php</a>
-- <a target="_blank" href="https://gitee.com/zsvg/vboot-net">@zsvg vboot-net</a>
-- <a target="_blank" href="https://gitee.com/zsvg/vboot-java">@zsvg vboot-java</a>
-- <a target="_blank" href="https://gitee.com/wonderful-code/buildadmin">@青红造了个白 buildadmin</a>
-- <a target="_blank" href="https://github.com/xiaodingding/iotfast">@Goodwell iotfast(一个开源的物联网平台)</a>
-
-#### ❤️ 鸣谢列表
-
-- <a href="https://github.com/vuejs/vue" target="_blank">vue</a>
-- <a href="https://github.com/vuejs/vue-next" target="_blank">vue-next</a>
-- <a href="https://github.com/ElemeFE/element" target="_blank">element-ui</a>
-- <a href="https://github.com/element-plus/element-plus" target="_blank">element-plus</a>
-- <a href="https://github.com/vuejs/vue-router-next" target="_blank">vue-router-next</a>
-- <a href="https://github.com/vuejs/pinia" target="_blank">pinia</a>
-- <a href="https://github.com/apache/echarts" target="_blank">echarts</a>
-- <a href="https://github.com/axios/axios" target="_blank">axios</a>
-- <a href="https://github.com/inorganik/countUp.js" target="_blank">countUp</a>
-- <a href="https://github.com/developit/mitt" target="_blank">mitt</a>
-- <a href="https://github.com/rstacruz/nprogress" target="_blank">nprogress</a>
-- <a href="https://github.com/sindresorhus/screenfull.js" target="_blank">screenfull</a>
-- <a href="https://github.com/SortableJS/Sortable" target="_blank">sortablejs</a>
-- <a href="https://github.com/sass/sass" target="_blank">sass</a>
-- <a href="https://github.com/microsoft/TypeScript" target="_blank">typescript</a>
-- <a href="https://github.com/vitejs/vite" target="_blank">vite</a>
-- <a href="https://github.com/wangeditor-team/wangEditor" target="_blank">wangeditor</a>
-- <a href="https://github.com/fengyuanchen/cropperjs" target="_blank">cropperjs</a>
-- <a href="https://github.com/crabbly/Print.js" target="_blank">print-js</a>
-- <a href="https://github.com/jbaysolutions/vue-grid-layout" target="_blank">vue-grid-layout</a>
-- <a href="https://github.com/antoniandre/splitpanes" target="_blank">splitpanes</a>
-- <a href="https://github.com/jsplumb/jsplumb" target="_blank">jsplumb</a>
-- <a href="https://github.com/hxj9102/table2excel" target="_blank">js-table2excel</a>
-- <a href="https://github.com/mmf-fe/vite-plugin-cdn-import" target="_blank">vite-plugin-cdn-import</a>
-- <a href="https://github.com/js-cookie/js-cookie" target="_blank">js-cookie</a>
-- <a href="https://github.com/davidshimjs/qrcodejs" target="_blank">qrcodejs2-fixes</a>
-- <a href="https://github.com/ljharb/qs" target="_blank">qs</a>
-- <a href="https://github.com/JamieCurnow/vue-clipboard3" target="_blank">vue-clipboard3</a>
-- <a href="https://github.com/intlify/vue-i18n-next" target="_blank">vue-i18n</a>
-- <a href="https://github.com/vbenjs/vite-plugin-compression" target="_blank">vite-plugin-compression</a>
-- <a href="https://github.com/chenxch/vite-plugin-vue-setup-extend-plus" target="_blank">vite-plugin-vue-setup-extend-plus</a>
-
-#### 💕 特别感谢
-
-特别感谢老哥们的建议、指导与帮忙。谢谢！
-
-- <a href="https://gitee.com/click33/sa-plus" target="_blank">@省长</a>
-- <a href="https://gitee.com/jskz/Jskz-SpringCloud" target="_blank">@唐参</a>
-- <a href="https://gitee.com/chuange" target="_blank">@川歌</a>
-- @华仔
-
-#### 💌 支持作者
-
-如果觉得框架不错，或者已经在使用了，希望你可以去 <a target="_blank" href="https://github.com/lyt-Top/vue-next-admin">Github</a> 或者
-<a target="_blank" href="https://gitee.com/lyt-top/vue-next-admin">Gitee</a> 帮我点个 ⭐ Star，这将是对我极大的鼓励与支持。
+# QQ群
+<a href="http://qm.qq.com/cgi-bin/qm/qr?_wv=1027&k=g035KL0OrSeWwWqxKmCDSkQgxGRA9PaW&authKey=Va2o57thdynX1XdLMvpkYPPiWAKrJc6gESRHPOwtAiGLW%2BrMqvB3iE6cH1LJ9s0X&noverify=0&group_code=835488048" target="_blank">点击链接加入群聊【易软通openWMS沟通群】</a>
+<br/>
+<img src="images/temp_qrcode_share_835488048.png" width="350px" />
