@@ -36,11 +36,11 @@
       <el-form ref="form" :model="state.formField" inline label-width="100px" class="mt-20">
         <el-form-item label="项目名称" required class="w-300">
           <el-select v-model="state.formField.packageName" placeholder="请选择项目名称" class="w-100pc">
-            <el-option label="com.rattan.basic" value="com.rattan.basic"></el-option>
-            <el-option label="com.rattan.outbound" value="com.rattan.outbound"></el-option>
-            <el-option label="com.rattan.inbound" value="com.rattan.inbound"></el-option>
-            <el-option label="com.rattan.inventory" value="com.rattan.inventory"></el-option>
-            <el-option label="com.rattan.system" value="com.rattan.system"></el-option>
+            <el-option label="com.yiruantong.basic" value="com.yiruantong.basic"></el-option>
+            <el-option label="com.yiruantong.outbound" value="com.yiruantong.outbound"></el-option>
+            <el-option label="com.yiruantong.inbound" value="com.yiruantong.inbound"></el-option>
+            <el-option label="com.yiruantong.inventory" value="com.yiruantong.inventory"></el-option>
+            <el-option label="com.yiruantong.system" value="com.yiruantong.system"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="文件夹" required>
