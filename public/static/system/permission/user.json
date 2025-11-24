@@ -116,18 +116,38 @@
         "tagColorList": []
       },
       {
-        "type": "input",
+        "type": "select",
         "label": "所属角色",
         "dataType": "string",
         "icon": "yrt-danhangshurukuang",
         "options": {
-          "searchRowNo": 0,
           "width": "100%",
-          "noLabel": false,
           "defaultValue": "",
+          "multiple": false,
+          "disabled": false,
+          "clearable": false,
+          "placeholder": "",
           "required": false,
-          "pattern": "",
-          "placeholder": ""
+          "showLabel": true,
+          "noLabel": false,
+          "options": [
+            {
+              "value": "下拉框1"
+            },
+            {
+              "value": "下拉框2"
+            },
+            {
+              "value": "下拉框3"
+            }
+          ],
+          "remote": "bindDropdown",
+          "remoteOptions": [],
+          "dropdownId": 24,
+          "props": {
+            "value": "value",
+            "label": "label"
+          }
         },
         "prop": "roleNames",
         "sortable": false,
@@ -551,7 +571,7 @@
             "type": "button",
             "label": "新建",
             "options": {
-              "icon": "icon-yrt yrt-jiahao",
+              "icon": "yrt-yrt yrt-jiahao",
               "type": "primary",
               "authNode": "add"
             },
@@ -582,7 +602,7 @@
             "label": "停用",
             "options": {
               "authNode": "stop",
-              "icon": "icon-yrt yrt-chacha",
+              "icon": "yrt-yrt yrt-chacha",
               "type": "danger"
             },
             "key": "1730711736000_81067"
@@ -592,7 +612,7 @@
             "label": "启用",
             "options": {
               "authNode": "open",
-              "icon": "icon-yrt yrt-qiyong",
+              "icon": "yrt-yrt yrt-qiyong",
               "type": "success"
             },
             "key": "1730711767000_28200"
