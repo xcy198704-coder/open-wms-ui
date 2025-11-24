@@ -1,7 +1,8 @@
 <template>
   <div class="import-table">
     <!-- 导入表 -->
-    <el-dialog v-model="visible" draggable overflow title="导入表" width="1200px" top="5vh" append-to-body :lock-scroll="false" class="import-table">
+    <el-dialog v-model="visible" draggable overflow title="导入表" width="1200px" top="5vh" append-to-body
+      :lock-scroll="false" class="import-table">
       <el-form :model="queryParams" ref="queryFormRef" :inline="true">
         <el-form-item label="数据源" prop="dataName">
           <el-select v-model="queryParams.dataName" filterable placeholder="请选择/输入数据源名称" style="width: 200px">
@@ -20,37 +21,26 @@
         </el-form-item>
       </el-form>
       <el-row>
-        <el-table @row-click="clickRow" ref="tableRef" :data="dbTableList" @selection-change="handleSelectionChange" height="360px">
+        <el-table @row-click="clickRow" ref="tableRef" :data="dbTableList" @selection-change="handleSelectionChange"
+          height="360px">
           <el-table-column type="selection" width="55"></el-table-column>
           <el-table-column prop="tableName" label="表名称" :show-overflow-tooltip="true"></el-table-column>
           <el-table-column prop="tableComment" label="表描述" :show-overflow-tooltip="true"></el-table-column>
           <el-table-column prop="createTime" label="创建时间"></el-table-column>
           <el-table-column prop="updateTime" label="更新时间"></el-table-column>
         </el-table>
-        <pagination v-show="total > 0" :total="total" v-model:page="queryParams.pageIndex" v-model:limit="queryParams.pageSize" @pagination="getList" />
+        <pagination v-show="total > 0" :total="total" v-model:page="queryParams.pageIndex"
+          v-model:limit="queryParams.pageSize" @pagination="getList" />
       </el-row>
       <el-divider />
       <el-form ref="form" :model="state.formField" inline label-width="100px" class="mt-20">
         <el-form-item label="项目名称" required class="w-300">
           <el-select v-model="state.formField.packageName" placeholder="请选择项目名称" class="w-100pc">
-            <el-option label="org.dromara.basic" value="org.dromara.basic"></el-option>
-            <el-option label="org.dromara.outbound" value="org.dromara.outbound"></el-option>
-            <el-option label="org.dromara.inbound" value="org.dromara.inbound"></el-option>
-            <el-option label="org.dromara.inventory" value="org.dromara.inventory"></el-option>
-            <el-option label="org.dromara.mes" value="org.dromara.mes"></el-option>
-            <el-option label="org.dromara.erp" value="org.dromara.erp"></el-option>
-            <el-option label="org.dromara.tms" value="org.dromara.tms"></el-option>
-            <el-option label="org.dromara.finance" value="org.dromara.finance"></el-option>
-            <el-option label="org.dromara.crm" value="org.dromara.crm"></el-option>
-            <el-option label="org.dromara.interface" value="org.dromara.interface"></el-option>
-            <el-option label="org.dromara.oa" value="org.dromara.oa"></el-option>
-            <el-option label="org.dromara.cms" value="org.dromara.cms"></el-option>
-            <el-option label="org.dromara.stat" value="org.dromara.stat"></el-option>
-            <el-option label="org.dromara.messager" value="org.dromara.messager"></el-option>
-            <el-option label="org.dromara.system" value="org.dromara.system"></el-option>
-            <el-option label="org.dromara.unipay" value="org.dromara.unipay"></el-option>
-            <el-option label="org.dromara.freight" value="org.dromara.freight"></el-option>
-            <el-option label="org.dromara.ams" value="org.dromara.ams"></el-option>
+            <el-option label="com.rattan.basic" value="com.rattan.basic"></el-option>
+            <el-option label="com.rattan.outbound" value="com.rattan.outbound"></el-option>
+            <el-option label="com.rattan.inbound" value="com.rattan.inbound"></el-option>
+            <el-option label="com.rattan.inventory" value="com.rattan.inventory"></el-option>
+            <el-option label="com.rattan.system" value="com.rattan.system"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="文件夹" required>
