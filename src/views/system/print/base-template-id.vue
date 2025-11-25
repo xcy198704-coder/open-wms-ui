@@ -171,7 +171,7 @@
     <el-form class="print-tool no-print" :style="!props.menuId && !state.isPda ? 'position: fixed; left: 20px; bottom: 10px' : 'margin: 0 20px'">
       <el-form-item style="margin-bottom: 0">
         <el-button v-if="!onlyLodop && !props.menuId && !state.isPda" type="primary" @click="methods.printBill">打印</el-button>
-        <el-button type="primary" @click="methods.printBill()">LODOP直接打印</el-button>
+        <el-button v-if="props.menuId" type="primary" @click="methods.printBill()">LODOP直接打印</el-button>
         <span v-if="!props.menuId && !state.isPda" class="ml-10">共：{{ state.billDataList.length }}张</span>
       </el-form-item>
     </el-form>
