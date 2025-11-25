@@ -198,16 +198,16 @@
     <!-- 显示打印订单详情模板 -->
     <!-- <print2 v-if="state.scanSetting.isDetail_PrintBill && state.formData.orderId" ref="printRef2" :ids="'' + state.formData.orderId" type="express"></print2> -->
     <!-- 打印内容控制 -->
-    <div class="print-tool-bar no-print">
-      <el-button size="small" @click="clearAllPrintTemplates">{{ $tt('清空全部打印') }}</el-button>
-      <el-button size="small" @click="toggleExpressBill">
+    <div v-if="shouldShowPrintToolBar" class="print-tool-bar no-print">
+      <el-button v-if="hasAnyPrintContent" size="small" @click="clearAllPrintTemplates">{{ $tt('清空全部打印') }}</el-button>
+      <el-button v-if="hasExpressBillSetting" size="small" @click="toggleExpressBill">
         {{ state.printStatus.expressBill ? $tt('清空物流面单') : $tt('重打物流面单') }}
       </el-button>
-      <el-button size="small" @click="toggleOrderListBill">
+      <el-button v-if="hasOrderListSetting" size="small" @click="toggleOrderListBill">
         {{ state.printStatus.orderList ? $tt('清空出库清单') : $tt('重打出库清单') }}
       </el-button>
-      <el-button size="small" @click="clearCaseListTemplatesOnly">{{ $tt('清空装箱清单') }}</el-button>
-      <el-button size="small" @click="clearCaseLabelTemplatesOnly">{{ $tt('清空箱标签') }}</el-button>
+      <el-button v-if="hasCaseListPrint" size="small" @click="clearCaseListTemplatesOnly">{{ $tt('清空装箱清单') }}</el-button>
+      <el-button v-if="hasCaseLabelPrint" size="small" @click="clearCaseLabelTemplatesOnly">{{ $tt('清空箱标签') }}</el-button>
     </div>
 
     <!-- 显示打印装箱清单模板 -->
@@ -233,7 +233,7 @@
 </template>
 
 <script setup lang="ts" name="outbound-scan-out">
-import { ComponentInternalInstance, createVNode, render, nextTick } from 'vue';
+import { ComponentInternalInstance, createVNode, render, nextTick, computed } from 'vue';
 import { BaseProperties, DetailField } from '/@/types/base-type';
 import { postData } from '/@/api/common/baseApi';
 import { DataType, QueryType } from '/@/types/common';
@@ -573,10 +573,15 @@ const state = reactive({
   outSetting: {
     visible: false,
   },
-  // 打印状态，用于切换按钮显示“重打”或“清空”
+  // 打印状态，用于切换按钮显示"重打"或"清空"
   printStatus: {
     expressBill: false,
     orderList: false,
+  },
+  // 打印内容存在状态
+  hasPrintContent: {
+    caseList: false,
+    caseLabel: false,
   },
 });
 //#endregion
@@ -1094,6 +1099,8 @@ const partialSave = async (saveStatus?: any) => {
 
 // 重置
 const onReset = () => {
+  clearCaseList(); // 清空装箱出库单列表
+  clearAllPrintTemplates(); // 清空全部打印
   // 初始化formData数据
   state.formData.orderId = 0;
   state.formData.orderCode = '';
@@ -1455,6 +1462,7 @@ const clearPrintTemplateData = (type: 'caseList' | 'caseLabel') => {
   keys.forEach((key) => sessionStorage.removeItem(key));
   state.printTemplateKeys[type] = [];
   clearPrintContainers(type);
+  state.hasPrintContent[type] = false;
 };
 
 // 应用场景设置改变
@@ -1476,6 +1484,11 @@ const autoPrintSelectedTemplates = () => {
   const billPrintSettings = state.scanSetting.billPrintSettings || [];
   const autoPrintBill = state.scanSetting.autoPrintBill || [];
   clearPrintContainers();
+  // 重置打印内容状态
+  state.hasPrintContent.caseList = false;
+  state.hasPrintContent.caseLabel = false;
+  // 重置打印状态
+  resetPrintStatus();
 
   state.scanSetting.printBill.forEach((printType: string) => {
     const config = printTypeConfigMap[printType as PrintTemplateType];
@@ -1491,6 +1504,13 @@ const autoPrintSelectedTemplates = () => {
 
     const printName = printSetting.printName || undefined;
     printBill(config.menuId as any, templateId as any, state.formData.orderId as any, printName as any, isAutoPrint, undefined, true, undefined, config.tag);
+
+    // 更新打印状态，标记已打印
+    if (printType === 'expressBill') {
+      state.printStatus.expressBill = true;
+    } else if (printType === 'orderList') {
+      state.printStatus.orderList = true;
+    }
   });
 };
 
@@ -1626,6 +1646,8 @@ const printCaseList = async () => {
 
     await nextTick();
   }
+  // 标记装箱清单已打印
+  state.hasPrintContent.caseList = true;
 };
 
 // 打印箱标签
@@ -1712,6 +1734,8 @@ const printCaseLabel = async () => {
 
     await nextTick();
   }
+  // 标记箱标签已打印
+  state.hasPrintContent.caseLabel = true;
 };
 
 const clearAllPrintTemplates = () => {
@@ -1722,6 +1746,8 @@ const clearAllPrintTemplates = () => {
   clearPrintContainers('caseNumber');
   clearPrintContainers();
   resetPrintStatus();
+  state.hasPrintContent.caseList = false;
+  state.hasPrintContent.caseLabel = false;
 };
 
 const toggleExpressBill = async () => {
@@ -1790,6 +1816,36 @@ const resetPrintStatus = () => {
   state.printStatus.expressBill = false;
   state.printStatus.orderList = false;
 };
+
+// 检查是否有任何打印内容
+const hasAnyPrintContent = computed(() => {
+  return state.printStatus.expressBill || state.printStatus.orderList || state.hasPrintContent.caseList || state.hasPrintContent.caseLabel;
+});
+
+// 检查是否应该显示打印工具栏（只要有勾选的打印单据或已有打印内容）
+const shouldShowPrintToolBar = computed(() => {
+  return hasExpressBillSetting.value || hasOrderListSetting.value || hasAnyPrintContent.value;
+});
+
+// 检查是否勾选了打印物流面单（需要先扫描出库单号）
+const hasExpressBillSetting = computed(() => {
+  return state.formData.orderId && state.scanSetting.printBill && state.scanSetting.printBill.includes('expressBill');
+});
+
+// 检查是否勾选了打印出库清单（需要先扫描出库单号）
+const hasOrderListSetting = computed(() => {
+  return state.formData.orderId && state.scanSetting.printBill && state.scanSetting.printBill.includes('orderList');
+});
+
+// 检查是否有打印装箱清单的内容
+const hasCaseListPrint = computed(() => {
+  return state.hasPrintContent.caseList;
+});
+
+// 检查是否有打印箱标签的内容
+const hasCaseLabelPrint = computed(() => {
+  return state.hasPrintContent.caseLabel;
+});
 </script>
 
 <style lang="scss" scoped>

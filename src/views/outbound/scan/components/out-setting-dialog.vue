@@ -18,9 +18,6 @@
           <div class="item-title">一品一箱</div>
           <div class="item--sub-title">扫描出库单号后，进行一个商品装一下操作</div>
         </div>
-        <div class="left-item" :class="{ active: state.currentScene === 'custom' }" @click="selectScene('custom')">
-          <div class="item-title">自定义场景</div>
-        </div>
         <div v-for="(item, index) in state.customScenes" :key="item.id" class="left-item custom-scene-item" :class="{ active: state.currentScene === `custom_${item.id}` }" @click="selectCustomScene(item)">
           <div class="item-title">{{ item.name }}</div>
         </div>
@@ -28,16 +25,16 @@
       <div class="container-right">
         <el-form :model="state.config" label-width="120px">
           <el-form-item label="商品校验">
-            <el-switch v-model="state.config.isValidateProductCode" :disabled="state.isFormDisabled" />
+            <el-switch v-model="state.config.isValidateProductCode" />
           </el-form-item>
           <el-form-item label="开启包材">
-            <el-switch v-model="state.config.isOpenWrapperBarcode" :disabled="state.isFormDisabled" />
+            <el-switch v-model="state.config.isOpenWrapperBarcode" />
           </el-form-item>
           <el-form-item label="开启多包材">
-            <el-switch v-model="state.config.isManyWrapperBarcode" :disabled="state.isFormDisabled" />
+            <el-switch v-model="state.config.isManyWrapperBarcode" />
           </el-form-item>
           <el-form-item label="装箱模式">
-            <el-radio-group v-model="state.config.caseMode" @change="caseModeChange" :disabled="state.isFormDisabled">
+            <el-radio-group v-model="state.config.caseMode" @change="caseModeChange">
               <el-radio :label="0">未开启</el-radio>
               <el-radio :label="1">一品一箱</el-radio>
               <el-radio :label="2">多品一箱</el-radio>
@@ -88,7 +85,7 @@
     <template #footer>
       <span class="flex-end">
         <el-button v-if="state.currentScene.startsWith('custom_') && state.currentCustomSceneId" @click="deleteCustomScene" type="danger">删除自定义场景</el-button>
-        <el-button v-if="state.currentScene === 'custom' || state.currentScene.startsWith('custom_')" @click="saveCustomScene" type="success">保存自定义场景</el-button>
+        <el-button @click="saveCustomScene" type="success">保存自定义场景</el-button>
         <el-button @click="currentDialogVisible = false">取 消</el-button>
         <el-button :loading="state.isLoading" type="primary" icon="ele-Select" @click="save">保存</el-button>
       </span>
@@ -353,24 +350,32 @@ const scenePresets = {
     isOpenWrapperBarcode: false,
     isManyWrapperBarcode: false,
     caseMode: 0,
+    printBill: [], // 扫单出库和验码出库：打印单据全部不勾选
+    autoPrintBill: [], // 扫单出库和验码出库：是否自动打印全部不勾选
   },
   validate: {
     isValidateProductCode: true,
     isOpenWrapperBarcode: false,
     isManyWrapperBarcode: false,
     caseMode: 0,
+    printBill: [], // 扫单出库和验码出库：打印单据全部不勾选
+    autoPrintBill: [], // 扫单出库和验码出库：是否自动打印全部不勾选
   },
   multi: {
     isValidateProductCode: true,
     isOpenWrapperBarcode: false,
     isManyWrapperBarcode: false,
     caseMode: 2,
+    printBill: ['expressBill', 'orderList'], // 多品一箱和一品一箱：打印单据全部勾选
+    autoPrintBill: ['expressBill', 'orderList'], // 多品一箱和一品一箱：是否自动打印全部勾选
   },
   single: {
     isValidateProductCode: true,
     isOpenWrapperBarcode: false,
     isManyWrapperBarcode: false,
     caseMode: 1,
+    printBill: ['expressBill', 'orderList'], // 多品一箱和一品一箱：打印单据全部勾选
+    autoPrintBill: ['expressBill', 'orderList'], // 多品一箱和一品一箱：是否自动打印全部勾选
   },
 };
 
@@ -378,28 +383,33 @@ const scenePresets = {
 const selectScene = (sceneType: string, preserveConfig = false) => {
   state.currentScene = sceneType;
   state.currentCustomSceneId = null;
+  // 所有场景都可以编辑
+  state.isFormDisabled = false;
 
-  if (sceneType === 'custom') {
-    // 自定义场景：允许编辑
-    state.isFormDisabled = false;
-  } else {
-    // 预设场景：禁用编辑并应用配置
-    state.isFormDisabled = true;
-    const preset = scenePresets[sceneType as keyof typeof scenePresets];
-    if (preset) {
-      // 如果 preserveConfig 为 true，只更新预设相关的字段，保留其他配置（如打印设置）
-      if (preserveConfig) {
-        Object.assign(state.config, {
-          isValidateProductCode: preset.isValidateProductCode,
-          isOpenWrapperBarcode: preset.isOpenWrapperBarcode,
-          isManyWrapperBarcode: preset.isManyWrapperBarcode,
-          caseMode: preset.caseMode,
-        });
-      } else {
-        Object.assign(state.config, preset);
-      }
-      caseModeChange();
+  const preset = scenePresets[sceneType as keyof typeof scenePresets];
+  if (preset) {
+    // 如果 preserveConfig 为 true，只更新预设相关的字段，保留其他配置（如打印设置）
+    if (preserveConfig) {
+      Object.assign(state.config, {
+        isValidateProductCode: preset.isValidateProductCode,
+        isOpenWrapperBarcode: preset.isOpenWrapperBarcode,
+        isManyWrapperBarcode: preset.isManyWrapperBarcode,
+        caseMode: preset.caseMode,
+        printBill: preset.printBill || [],
+        autoPrintBill: preset.autoPrintBill || [],
+      });
+    } else {
+      // 应用预设配置，包括打印单据和自动打印设置
+      Object.assign(state.config, {
+        isValidateProductCode: preset.isValidateProductCode,
+        isOpenWrapperBarcode: preset.isOpenWrapperBarcode,
+        isManyWrapperBarcode: preset.isManyWrapperBarcode,
+        caseMode: preset.caseMode,
+        printBill: preset.printBill || [],
+        autoPrintBill: preset.autoPrintBill || [],
+      });
     }
+    caseModeChange();
   }
 };
 
@@ -407,7 +417,8 @@ const selectScene = (sceneType: string, preserveConfig = false) => {
 const selectCustomScene = (scene: { id: string; name: string; config: any }) => {
   state.currentScene = `custom_${scene.id}`;
   state.currentCustomSceneId = scene.id;
-  state.isFormDisabled = true;
+  // 自定义场景也可以编辑
+  state.isFormDisabled = false;
 
   // 应用自定义场景的配置
   if (scene.config) {
@@ -547,11 +558,6 @@ const restoreSelectedScene = async () => {
             selectCustomScene(customScene);
             return;
           }
-        } else if (savedScene === 'custom') {
-          // 如果是自定义场景但未选中具体场景
-          console.log('恢复场景 - 选择自定义场景（未选中具体场景）');
-          selectScene('custom');
-          return;
         } else {
           // 预设场景：使用 preserveConfig=true 保留打印设置等配置
           const presetScenes = ['scan', 'validate', 'multi', 'single'];
@@ -608,7 +614,7 @@ const saveCustomScene = async () => {
       };
       await common.setUserCache(UserCacheEnum.SCAN_OUT_SETTING, configToSave);
 
-      proxy.$message.success('自定义场景保存成功');
+      // proxy.$message.success('自定义场景保存成功');
       // 选中刚保存的场景
       selectCustomScene(newScene);
     })
@@ -641,11 +647,9 @@ const deleteCustomScene = () => {
       };
       await common.setUserCache(UserCacheEnum.SCAN_OUT_SETTING, configToSave);
 
-      proxy.$message.success('删除成功');
-      // 切换到自定义场景（未选中任何具体场景）
-      state.currentScene = 'custom';
-      state.currentCustomSceneId = null;
-      state.isFormDisabled = false;
+      // proxy.$message.success('删除成功');
+      // 删除后切换到扫单出库
+      selectScene('scan', true);
     })
     .catch(() => {
       // 用户取消
