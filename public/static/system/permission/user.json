@@ -159,18 +159,38 @@
         "align": "center"
       },
       {
-        "type": "input",
+        "type": "select",
         "label": "所属岗位",
         "dataType": "string",
         "icon": "yrt-danhangshurukuang",
         "options": {
-          "searchRowNo": 0,
           "width": "100%",
-          "noLabel": false,
           "defaultValue": "",
+          "multiple": false,
+          "disabled": false,
+          "clearable": false,
+          "placeholder": "",
           "required": false,
-          "pattern": "",
-          "placeholder": ""
+          "showLabel": true,
+          "noLabel": false,
+          "options": [
+            {
+              "value": "下拉框1"
+            },
+            {
+              "value": "下拉框2"
+            },
+            {
+              "value": "下拉框3"
+            }
+          ],
+          "remote": "bindDropdown",
+          "remoteOptions": [],
+          "dropdownId": 1158,
+          "props": {
+            "value": "value",
+            "label": "label"
+          }
         },
         "prop": "postNames",
         "sortable": false,
