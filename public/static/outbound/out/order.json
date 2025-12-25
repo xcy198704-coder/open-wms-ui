@@ -1060,30 +1060,6 @@
         "width": 140
       },
       {
-        "type": "input",
-        "label": "内部编号",
-        "dataType": "string",
-        "icon": "yrt-danhangshurukuang",
-        "options": {
-          "searchRowNo": 0,
-          "width": "100%",
-          "noLabel": false,
-          "defaultValue": "",
-          "required": false,
-          "pattern": "",
-          "placeholder": ""
-        },
-        "prop": "externalNo",
-        "sortable": false,
-        "hidden": false,
-        "isQuickSearch": false,
-        "align": "center",
-        "headerAlign": "center",
-        "key": "1697708556315_13911",
-        "tagColorList": [],
-        "width": ""
-      },
-      {
         "type": "select",
         "label": "经手人",
         "dataType": "string",
@@ -2557,52 +2533,9 @@
             "fields": [
               {
                 "type": "select",
-                "label": "配送线路",
-                "options": {
-                  "width": "100%",
-                  "defaultValue": null,
-                  "multiple": false,
-                  "disabled": false,
-                  "clearable": false,
-                  "placeholder": "",
-                  "required": false,
-                  "showLabel": true,
-                  "noLabel": false,
-                  "options": [
-                    {
-                      "value": "下拉框1"
-                    },
-                    {
-                      "value": "下拉框2"
-                    },
-                    {
-                      "value": "下拉框3"
-                    }
-                  ],
-                  "remote": "bindDropdown",
-                  "remoteOptions": [],
-                  "dropdownId": 1025,
-                  "props": {
-                    "value": "value",
-                    "label": "label"
-                  },
-                  "prop": "lineName",
-                  "popoverWidth": "300px",
-                  "dataType": "string",
-                  "keyProp": "lineId"
-                },
-                "key": "1697719820864_19286",
-                "model": "input_1697719820864_19286"
-              }
-            ]
-          },
-          {
-            "span": 8,
-            "fields": [
-              {
-                "type": "select",
                 "label": "配送类型",
                 "options": {
+                  "dataType": "string",
                   "width": "100%",
                   "defaultValue": "",
                   "multiple": false,
@@ -2631,11 +2564,33 @@
                     "label": "label"
                   },
                   "prop": "distributionType",
-                  "popoverWidth": "300px",
-                  "dataType": "string"
+                  "popoverWidth": "300px"
                 },
-                "key": "1697719831591_17900",
-                "model": "input_1697719831591_17900"
+                "key": "1766643125390_80017",
+                "model": "select_1766643125390_80017"
+              }
+            ]
+          },
+          {
+            "span": 8,
+            "fields": [
+              {
+                "type": "input",
+                "label": "打包件数",
+                "options": {
+                  "dataType": "integer",
+                  "width": "100%",
+                  "defaultValue": null,
+                  "required": false,
+                  "readonly": true,
+                  "disabled": false,
+                  "pattern": "",
+                  "placeholder": "",
+                  "noLabel": false,
+                  "prop": "totalPackage"
+                },
+                "key": "1766643126986_31024",
+                "model": "input_1766643126986_31024"
               }
             ]
           },
@@ -2705,21 +2660,22 @@
             "fields": [
               {
                 "type": "input",
-                "label": "打包件数",
+                "label": "运输方式",
+                "dataType": "string",
+                "icon": "yrt-danhangshurukuang",
                 "options": {
-                  "dataType": "integer",
+                  "dataType": "string",
+                  "prop": "logisticsMode",
+                  "searchRowNo": 0,
                   "width": "100%",
-                  "defaultValue": null,
-                  "required": false,
-                  "readonly": true,
-                  "disabled": false,
-                  "pattern": "",
-                  "placeholder": "",
                   "noLabel": false,
-                  "prop": "totalPackage"
+                  "defaultValue": "",
+                  "required": false,
+                  "pattern": "",
+                  "placeholder": ""
                 },
-                "key": "1698734461585_38067",
-                "model": "input_1698734461585_38067"
+                "key": "1766643129625_47006",
+                "model": "input_1766643129625_47006"
               }
             ]
           },
@@ -2767,30 +2723,6 @@
             "span": 8,
             "fields": [
               {
-                "type": "input",
-                "label": "运输方式",
-                "dataType": "string",
-                "icon": "yrt-danhangshurukuang",
-                "options": {
-                  "dataType": "string",
-                  "prop": "logisticsMode",
-                  "searchRowNo": 0,
-                  "width": "100%",
-                  "noLabel": false,
-                  "defaultValue": "",
-                  "required": false,
-                  "pattern": "",
-                  "placeholder": ""
-                },
-                "key": "1718870407670_22914",
-                "model": "input_1718870407670_22914"
-              }
-            ]
-          },
-          {
-            "span": 8,
-            "fields": [
-              {
                 "type": "date",
                 "label": "订单日期",
                 "dataType": "datetime",
@@ -2815,8 +2747,8 @@
                   "popoverWidth": "300px",
                   "formatter": "YYYY-MM-DD"
                 },
-                "key": "1718870413115_33552",
-                "model": "date_1718870413115_33552"
+                "key": "1766643130868_64496",
+                "model": "date_1766643130868_64496"
               }
             ]
           },
@@ -2848,10 +2780,14 @@
                   "popoverWidth": "300px",
                   "formatter": "YYYY-MM-DD"
                 },
-                "key": "1718870410906_3366",
-                "model": "date_1718870410906_3366"
+                "key": "1766643132343_86626",
+                "model": "date_1766643132343_86626"
               }
             ]
+          },
+          {
+            "span": 8,
+            "fields": []
           }
         ],
         "options": {
@@ -4603,41 +4539,7 @@
         "columns": [
           {
             "span": 8,
-            "fields": [
-              {
-                "type": "radio",
-                "label": "一次性费用收取",
-                "options": {
-                  "inline": true,
-                  "defaultValue": "按货主",
-                  "showLabel": false,
-                  "noLabel": false,
-                  "options": [
-                    {
-                      "value": "按货主",
-                      "label": "按货主"
-                    },
-                    {
-                      "value": "按提货人",
-                      "label": "按提货人"
-                    }
-                  ],
-                  "required": false,
-                  "width": "",
-                  "remote": false,
-                  "remoteOptions": [],
-                  "props": {
-                    "value": "value",
-                    "label": "label"
-                  },
-                  "dataType": "string",
-                  "prop": "feeType",
-                  "label-width": 140
-                },
-                "key": "1697772985067_70649",
-                "model": "input_1697772985067_70649"
-              }
-            ]
+            "fields": []
           },
           {
             "span": 8,
