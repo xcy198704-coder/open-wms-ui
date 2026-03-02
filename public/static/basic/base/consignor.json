@@ -132,27 +132,6 @@
       },
       {
         "type": "input",
-        "label": "仓储费状态",
-        "dataType": "string",
-        "icon": "yrt-danhangshurukuang",
-        "options": {
-          "searchRowNo": 0,
-          "width": "100%",
-          "noLabel": false,
-          "defaultValue": null,
-          "required": false,
-          "pattern": "",
-          "placeholder": ""
-        },
-        "prop": "effectiveStatus",
-        "sortable": false,
-        "hidden": false,
-        "isQuickSearch": false,
-        "key": "1693231295055_98784",
-        "tagColorList": []
-      },
-      {
-        "type": "input",
         "label": "联系地址",
         "dataType": "string",
         "icon": "yrt-danhangshurukuang",
@@ -317,16 +296,6 @@
         "type": "button-group",
         "label": "按钮组",
         "buttons": [
-          {
-            "type": "button",
-            "label": "新建",
-            "options": {
-              "icon": "yrt-addplus",
-              "type": "primary",
-              "authNode": "add"
-            },
-            "key": "btn-add"
-          },
           {
             "type": "button",
             "label": "删除",

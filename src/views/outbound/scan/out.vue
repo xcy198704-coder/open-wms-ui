@@ -39,7 +39,8 @@
                 {{ $tt('复核提交') }}
               </el-button>
               <el-button v-if="state.scanSetting.isOpenCase" @click="changeBox">{{ $tt('换箱') }}</el-button>
-              <el-button v-if="state.scanSetting.isOpenCase" class="success margin-right-10" @click="printCarNum">{{ $tt('打印箱标签') }}</el-button>
+              <!-- @click="printCarNum" -->
+              <!-- <el-button v-if="state.scanSetting.isOpenCase" class="success margin-right-10" @click="printCaseLabel">{{ $tt('打印箱标签') }}</el-button> -->
               <el-button class="margin-right-10" @click="onReset">{{ $tt('重置') }}</el-button>
             </el-form-item>
           </el-form>
@@ -167,8 +168,13 @@
       </el-table>
 
       <!--装箱信息-->
-      <div v-if="state.scanSetting.isOpenCase" style="font-size: 16px; font-weight: bolder; padding-left: 10px">{{ $tt('出库单装箱结果记录') }}</div>
-      <el-table v-if="state.scanSetting.isOpenCase" :data="state.tableDataCase" style="width: 100%" max-height="500px">
+      <div v-if="state.scanSetting.isOpenCase" style="font-size: 16px; font-weight: bolder; padding-left: 10px; display: flex; align-items: center; gap: 10px; margin-bottom: 10px">
+        <span>{{ $tt('出库单装箱结果记录') }}</span>
+        <el-button type="primary" size="small" @click="printCaseList">{{ $tt('打印装箱清单') }}</el-button>
+        <el-button type="primary" size="small" @click="printCaseLabel">{{ $tt('打印箱标签') }}</el-button>
+      </div>
+      <el-table v-if="state.scanSetting.isOpenCase" :data="state.tableDataCase" style="width: 100%" max-height="500px" @selection-change="handleCaseSelectionChange">
+        <el-table-column type="selection" width="55" />
         <el-table-column type="index" width="50" />
         <el-table-column prop="caseNumber" :label="$tt('箱号')" width="160" />
         <el-table-column prop="orderCode" :label="$tt('出库单号')" width="140" />
@@ -191,6 +197,19 @@
     <!-- <print v-if="state.scanSetting.isOuter_PrintBill" ref="printRef" :ids="'' + state.formData.orderId" type="express"></print> -->
     <!-- 显示打印订单详情模板 -->
     <!-- <print2 v-if="state.scanSetting.isDetail_PrintBill && state.formData.orderId" ref="printRef2" :ids="'' + state.formData.orderId" type="express"></print2> -->
+    <!-- 打印内容控制 -->
+    <div v-if="shouldShowPrintToolBar" class="print-tool-bar no-print">
+      <el-button v-if="hasAnyPrintContent" size="small" @click="clearAllPrintTemplates">{{ $tt('清空全部打印') }}</el-button>
+      <el-button v-if="hasExpressBillSetting" size="small" @click="toggleExpressBill">
+        {{ state.printStatus.expressBill ? $tt('清空物流面单') : $tt('重打物流面单') }}
+      </el-button>
+      <el-button v-if="hasOrderListSetting" size="small" @click="toggleOrderListBill">
+        {{ state.printStatus.orderList ? $tt('清空出库清单') : $tt('重打出库清单') }}
+      </el-button>
+      <el-button v-if="hasCaseListPrint" size="small" @click="clearCaseListTemplatesOnly">{{ $tt('清空装箱清单') }}</el-button>
+      <el-button v-if="hasCaseLabelPrint" size="small" @click="clearCaseLabelTemplatesOnly">{{ $tt('清空箱标签') }}</el-button>
+    </div>
+
     <!-- 显示打印装箱清单模板 -->
     <div id="mount-print"></div>
 
@@ -214,10 +233,10 @@
 </template>
 
 <script setup lang="ts" name="outbound-scan-out">
-import { ComponentInternalInstance, createVNode, render } from 'vue';
+import { ComponentInternalInstance, createVNode, render, nextTick, computed } from 'vue';
 import { BaseProperties, DetailField } from '/@/types/base-type';
 import { postData } from '/@/api/common/baseApi';
-import { getLodop } from '/@/utils/lodopFuncs.js';
+import { DataType, QueryType } from '/@/types/common';
 const ScanSettingDialog = defineAsyncComponent(() => import('/@/components/common/components/scanSettingDialog.vue'));
 const OutSettingDialog = defineAsyncComponent(() => import('./components/out-setting-dialog.vue'));
 import baseTemplateId from '/@/views/system/print/base-template-id.vue';
@@ -301,12 +320,70 @@ const state = reactive({
     isOpenCase: false, // 开启装箱
     // 装箱方式：0：常规扫描，1：一品一箱，2：多品一箱
     caseMode: 0,
+    // 打印单据勾选列表
+    printBill: [] as string[],
+    // 是否自动打印勾选列表
+    autoPrintBill: [] as string[],
+    // 打印模板设置
+    billPrintSettings: [
+      {
+        index: 1,
+        name: '打印物流面单',
+        templateType: '物流单',
+        templateName: '',
+        printName: '',
+      },
+      {
+        index: 2,
+        name: '打印箱标签',
+        templateType: '箱标签',
+        templateName: '',
+        printName: '',
+      },
+      {
+        index: 3,
+        name: '打印装箱清单',
+        templateType: '订单详情',
+        templateName: '',
+        printName: '',
+      },
+      {
+        index: 4,
+        name: '打印出库清单',
+        templateType: '订单详情',
+        templateName: '',
+        printName: '',
+      },
+    ] as Array<{
+      index: number;
+      name: string;
+      templateType: string;
+      templateName: string | number;
+      printName: string;
+    }>,
   },
   multipleSelection: [],
   // 订单信息
   orderInfo: {} as EmptyObjectType,
-  // 装箱列表
+  /**
+   * 装箱列表
+   * 1. 箱号
+   * 2. 出库单号
+   * 3. 合计数量
+   * 4. 合计重量
+   * 5. 客户名称
+   * 6. 收货人
+   * 7. 收货电话
+   * 8. 收货地址
+   */
   tableDataCase: [] as any[],
+  // 装箱结果勾选
+  selectedCaseRows: [] as any[],
+  // 打印模板缓存 key（用于清空对应模板数据）
+  printTemplateKeys: {
+    caseList: [] as string[],
+    caseLabel: [] as string[],
+  },
   // 已经找到的数据
   existRows: [],
   // 一次扫描的数量
@@ -496,18 +573,52 @@ const state = reactive({
   outSetting: {
     visible: false,
   },
+  // 打印状态，用于切换按钮显示"重打"或"清空"
+  printStatus: {
+    expressBill: false,
+    orderList: false,
+  },
+  // 打印内容存在状态
+  hasPrintContent: {
+    caseList: false,
+    caseLabel: false,
+  },
 });
 //#endregion
 
+type PrintTemplateType = 'expressBill' | 'orderList' | 'caseList' | 'caseLabel' | 'caseNumber';
+
+const printTypeConfigMap: Record<
+  PrintTemplateType,
+  {
+    name: string;
+    menuId: number;
+    tag: PrintTemplateType;
+  }
+> = {
+  expressBill: { name: '打印物流面单', menuId: 1671, tag: 'expressBill' },
+  orderList: { name: '打印出库清单', menuId: 1671, tag: 'orderList' },
+  caseList: { name: '打印装箱清单', menuId: 1671, tag: 'caseList' },
+  caseLabel: { name: '打印箱标签', menuId: 1671, tag: 'caseLabel' },
+  caseNumber: { name: '打印箱号', menuId: 1671, tag: 'caseNumber' },
+};
+
 //#region onMounted
 onMounted(async () => {
+  // printBill(); // 测试，记得删除掉
+
   // 字段设置
   const setting = localStorage[state.setting.name + '-setting'];
   if (setting) {
     state.setting.fields = JSON.parse(setting);
   }
   // 加载打印模板信息
-  state.scanSetting = (await common.getUserCache(UserCacheEnum.SCAN_OUT_SETTING)) || state.scanSetting;
+  const cachedScanSetting = (await common.getUserCache(UserCacheEnum.SCAN_OUT_SETTING)) || {};
+  state.scanSetting = { ...state.scanSetting, ...cachedScanSetting };
+  // 确保 autoPrintBill 有默认值
+  if (!state.scanSetting.autoPrintBill) {
+    state.scanSetting.autoPrintBill = [];
+  }
 });
 //#endregion
 
@@ -526,6 +637,9 @@ const getOutOrderData = async () => {
     proxy.$message.error('扫描单号不能为空!');
     return;
   }
+
+  clearPrintContainers();
+  resetPrintStatus();
 
   const url = '/outbound/out/outScanOrder/getOutOrderData';
   const params = {
@@ -589,9 +703,7 @@ const getOutOrderData = async () => {
       return row;
     });
 
-    if (state.config.outer_printBill === true) {
-      state.formData.orderId = base.state.tableData[0].orderId;
-    }
+    state.formData.orderId = res.data.orderInfo?.orderId || (base.state.tableData.length ? base.state.tableData[0].orderId : 0);
 
     // 条码框获得焦点
     if (state.scanSetting.isValidateProductCode) {
@@ -601,9 +713,13 @@ const getOutOrderData = async () => {
     } else {
       base.focus('orderCode');
     }
+
+    autoPrintSelectedTemplates();
   } else {
     onReset();
   }
+
+  clearCaseList(); // 清空装箱出库单列表
 };
 
 // 判断扫描包装条码
@@ -652,6 +768,73 @@ const checkPackingBarcode = async () => {
   }
 
   await autoSumit(); // 扫描完成后自动提交
+
+  // 更新出库单装箱结果记录：按箱号分组并计算每个箱号的总数量
+  if (state.scanSetting.isOpenCase && base.state.tableData && base.state.tableData.length > 0) {
+    // 按 caseNumber 进行分组
+    const groupedByCaseNumber = base.state.tableData.reduce((acc: Record<string, any[]>, item: any) => {
+      const caseNumber = item.caseNumber;
+      if (!caseNumber) return acc; // 跳过没有箱号的数据
+
+      if (!acc[caseNumber]) {
+        acc[caseNumber] = [];
+      }
+      acc[caseNumber].push(item);
+      return acc;
+    }, {});
+
+    // 遍历每个箱号，计算总数量并更新到 tableDataCase
+    Object.keys(groupedByCaseNumber).forEach((caseNumber) => {
+      const caseItems = groupedByCaseNumber[caseNumber];
+
+      // 计算该箱号下所有 finishedQuantity 的总和
+      const totalQuantityOrder = caseItems.reduce((sum: number, item: any) => {
+        return sum + (Number(item.finishedQuantity) || 0);
+      }, 0);
+
+      // 查找 tableDataCase 中是否已存在该箱号的记录
+      const existingCase = state.tableDataCase.find((item: any) => item.caseNumber === caseNumber);
+
+      if (existingCase) {
+        // 如果存在，更新总数量
+        existingCase.totalQuantityOrder = totalQuantityOrder;
+        // 如果订单信息存在，也更新其他字段
+        if (state.orderInfo && Object.keys(state.orderInfo).length > 0) {
+          existingCase.orderCode = state.orderInfo.orderCode || existingCase.orderCode;
+          existingCase.totalWeight = state.orderInfo.totalWeight || existingCase.totalWeight;
+          existingCase.clientShortName = state.orderInfo.clientShortName || existingCase.clientShortName;
+          existingCase.shippingName = state.orderInfo.shippingName || existingCase.shippingName;
+          existingCase.mobile = state.orderInfo.mobile || existingCase.mobile;
+          existingCase.shippingAddress = state.orderInfo.shippingAddress || existingCase.shippingAddress;
+          existingCase.consignorName = state.orderInfo.consignorName || existingCase.consignorName;
+          existingCase.storageName = state.orderInfo.storageName || existingCase.storageName;
+          existingCase.remark = state.orderInfo.remark || existingCase.remark;
+        }
+      } else {
+        // 如果不存在，创建新记录
+        const newCaseRecord: any = {
+          caseNumber: caseNumber,
+          totalQuantityOrder: totalQuantityOrder,
+        };
+
+        // 如果订单信息存在，添加订单相关字段
+        if (state.orderInfo && Object.keys(state.orderInfo).length > 0) {
+          newCaseRecord.orderCode = state.orderInfo.orderCode || '';
+          newCaseRecord.orderId = state.orderInfo.orderId || state.formData.orderId || '';
+          newCaseRecord.totalWeight = state.orderInfo.totalWeight || 0;
+          newCaseRecord.clientShortName = state.orderInfo.clientShortName || '';
+          newCaseRecord.shippingName = state.orderInfo.shippingName || '';
+          newCaseRecord.mobile = state.orderInfo.mobile || '';
+          newCaseRecord.shippingAddress = state.orderInfo.shippingAddress || '';
+          newCaseRecord.consignorName = state.orderInfo.consignorName || '';
+          newCaseRecord.storageName = state.orderInfo.storageName || '';
+          newCaseRecord.remark = state.orderInfo.remark || '';
+        }
+
+        state.tableDataCase.push(newCaseRecord);
+      }
+    });
+  }
 };
 
 // 扫描完成后自动提交
@@ -894,7 +1077,7 @@ const partialSave = async (saveStatus?: any) => {
   proxy.common.showMsg(res);
   if (!res.result) return false;
 
-  addCaseList(); // 增加装箱出库单列表
+  // addCaseList(); // 增加装箱出库单列表
 
   state.formSave.isOpenPackage = false;
   // 区分点击的是提交还是按件数提交
@@ -916,6 +1099,8 @@ const partialSave = async (saveStatus?: any) => {
 
 // 重置
 const onReset = () => {
+  clearCaseList(); // 清空装箱出库单列表
+  clearAllPrintTemplates(); // 清空全部打印
   // 初始化formData数据
   state.formData.orderId = 0;
   state.formData.orderCode = '';
@@ -964,7 +1149,7 @@ const onReset = () => {
 
 // 换箱
 const changeBox = () => {
-  printBill();
+  // printBill('1671', '1720', '61010', '导出为WPS PDF', true);
   if (state.scanSetting.caseMode === 3) {
     if (base.state.tableData.length) {
       proxy.$message.warning('当前扫描出库单未提，不允许换箱!');
@@ -987,10 +1172,10 @@ const changeBox = () => {
   }
 
   // 打印装箱单
-  if (!printCase()) return;
+  // if (!printCase()) return;
   // 重新生成箱号
   generateCaseNumber();
-  clearCaseList(); // 清空装箱出库单列表
+  // clearCaseList(); // 清空装箱出库单列表
 };
 // 生成箱号
 const generateCaseNumber = () => {
@@ -1028,6 +1213,8 @@ const addRow_1 = () => {
     return;
   }
   base.selectRow(rowData); // 选中后行
+
+  base.state.currentRow = rowData;
   if (!base.state.currentRow) {
     proxy.$message.error('没有可扫描的数据');
     return;
@@ -1082,6 +1269,12 @@ const addRow_2 = () => {
       rowData.finishedQuantity += scanQty;
       rowData.caseNumber = state.formData.caseNumber;
       base.state.currentRow = rowData;
+      if (rowData.finishedQuantity <= 0) {
+        const idx = base.state.tableData.indexOf(rowData);
+        if (idx > -1) {
+          base.state.tableData.splice(idx, 1);
+        }
+      }
     } else {
       const newRow = JSON.parse(JSON.stringify(rowData));
       rowData.unFinishedQuantity = 0;
@@ -1091,6 +1284,12 @@ const addRow_2 = () => {
       newRow.caseNumber = state.formData.caseNumber;
       base.state.tableData.splice(0, 0, newRow);
       base.state.currentRow = newRow;
+      if (rowData.finishedQuantity <= 0) {
+        const idx = base.state.tableData.indexOf(rowData);
+        if (idx > -1) {
+          base.state.tableData.splice(idx, 1);
+        }
+      }
     }
   }
   base.state.currentRow!.scanWeight = Math.Round(base.state.currentRow!.weight * base.state.currentRow!.finishedQuantity, 2);
@@ -1235,28 +1434,429 @@ const clearCaseList = () => {
   state.tableDataCase = [];
 };
 
+const clearPrintContainers = (type?: PrintTemplateType) => {
+  const mountRoot = document.getElementById('mount-print');
+  if (!mountRoot) return;
+  if (!type) {
+    mountRoot.innerHTML = '';
+    return;
+  }
+  const nodes = mountRoot.querySelectorAll(`.print-container[data-print-type="${type}"]`);
+  nodes.forEach((node) => node.remove());
+};
+
+const handleCaseSelectionChange = (rows: any[]) => {
+  state.selectedCaseRows = rows || [];
+};
+
+const getPrintableCaseRows = () => {
+  return state.selectedCaseRows.length > 0 ? state.selectedCaseRows : state.tableDataCase;
+};
+
+const registerPrintTemplateKey = (type: 'caseList' | 'caseLabel', storageKey: string) => {
+  state.printTemplateKeys[type].push(storageKey);
+};
+
+const clearPrintTemplateData = (type: 'caseList' | 'caseLabel') => {
+  const keys = state.printTemplateKeys[type];
+  keys.forEach((key) => sessionStorage.removeItem(key));
+  state.printTemplateKeys[type] = [];
+  clearPrintContainers(type);
+  state.hasPrintContent[type] = false;
+};
+
 // 应用场景设置改变
-const scanSettingChange = ({ config }: { config: any }) => {
-  state.scanSetting = config;
+const scanSettingChange = async ({ config }: { config: any }) => {
+  // 合并配置，保留场景信息
+  state.scanSetting = { ...state.scanSetting, ...config };
+  // 确保 autoPrintBill 有默认值
+  if (!state.scanSetting.autoPrintBill) {
+    state.scanSetting.autoPrintBill = [];
+  }
+  // 保存到缓存（config 已经包含场景信息）
+  await common.setUserCache(UserCacheEnum.SCAN_OUT_SETTING, config);
+};
+
+const autoPrintSelectedTemplates = () => {
+  if (!state.formData.orderId) return;
+  if (!state.scanSetting.printBill || state.scanSetting.printBill.length === 0) return;
+
+  const billPrintSettings = state.scanSetting.billPrintSettings || [];
+  const autoPrintBill = state.scanSetting.autoPrintBill || [];
+  clearPrintContainers();
+  // 重置打印内容状态
+  state.hasPrintContent.caseList = false;
+  state.hasPrintContent.caseLabel = false;
+  // 重置打印状态
+  resetPrintStatus();
+
+  state.scanSetting.printBill.forEach((printType: string) => {
+    const config = printTypeConfigMap[printType as PrintTemplateType];
+    if (!config) return;
+    const printSetting = billPrintSettings.find((item: any) => item.name === config.name);
+    if (!printSetting) return;
+
+    const templateId = Number(printSetting.templateName);
+    if (!templateId || Number.isNaN(templateId)) return;
+
+    // 检查当前打印类型是否勾选了自动打印
+    const isAutoPrint = autoPrintBill.includes(printType);
+
+    const printName = printSetting.printName || undefined;
+    printBill(config.menuId as any, templateId as any, state.formData.orderId as any, printName as any, isAutoPrint, undefined, true, undefined, config.tag);
+
+    // 更新打印状态，标记已打印
+    if (printType === 'expressBill') {
+      state.printStatus.expressBill = true;
+    } else if (printType === 'orderList') {
+      state.printStatus.orderList = true;
+    }
+  });
 };
 
 // 动态打印
-const printBill = () => {
-  const instance = createVNode(baseTemplateId, {
-    menuId: 1819,
-    ids: '68631',
-  });
-  render(instance, document.querySelector('#mount-print') as HTMLElement);
+const printBill = (menuId: string, tid: string, ids: string, printName: string | undefined, isAutoPrint: boolean, keyName?: string, isAutoLoad: boolean = true, onLoaded?: () => void, printTypeTag?: PrintTemplateType) => {
+  const mountRoot = document.getElementById('mount-print');
+  if (!mountRoot) return;
+
+  const container = document.createElement('div');
+  container.className = 'print-container';
+  if (printTypeTag) {
+    container.dataset.printType = printTypeTag;
+  }
+  mountRoot.appendChild(container);
+
+  const componentProps: Record<string, any> = {
+    menuId: String(menuId),
+    tid: String(tid),
+    ids: String(ids),
+    isAutoPrint,
+    isAutoLoad,
+  };
+
+  if (printName) {
+    componentProps.printName = printName;
+  }
+
+  if (keyName) {
+    componentProps.keyName = keyName;
+  }
+  if (onLoaded) {
+    componentProps.onLoaded = onLoaded;
+  }
+
+  const instance = createVNode(baseTemplateId, componentProps);
+  render(instance, container);
 };
+
+// 打印装箱清单
+const printCaseList = async () => {
+  // 检查是否有装箱记录数据
+  const targetCases = getPrintableCaseRows();
+  if (!targetCases || targetCases.length === 0) {
+    proxy.$message.warning('没有可打印的装箱记录');
+    return;
+  }
+
+  clearPrintTemplateData('caseList');
+
+  // 检查是否有扫描结果数据
+  if (!base.state.tableData || base.state.tableData.length === 0) {
+    proxy.$message.warning('没有扫描结果数据');
+    return;
+  }
+
+  // 从应用场景设置中获取打印装箱清单的配置
+  const billPrintSettings = state.scanSetting.billPrintSettings || [];
+  const printSetting = billPrintSettings.find((item: any) => item.name === '打印装箱清单');
+
+  if (!printSetting) {
+    proxy.$message.error('请先在应用场景设置中配置打印装箱清单的模板');
+    return;
+  }
+
+  const templateId = String(printSetting.templateName);
+  if (!templateId) {
+    proxy.$message.error('请先在应用场景设置中关联打印装箱清单的模板');
+    return;
+  }
+
+  // 获取打印机名称
+  const printName = printSetting.printName || '';
+
+  // 使用打印装箱清单的配置
+  const config = printTypeConfigMap.caseList;
+  if (!config) {
+    proxy.$message.error('打印装箱清单配置不存在');
+    return;
+  }
+
+  // 顺序处理每个箱号
+  for (let index = 0; index < targetCases.length; index++) {
+    const caseRecord = targetCases[index];
+    const caseNumber = caseRecord.caseNumber;
+    if (!caseNumber) continue;
+
+    // 根据箱号筛选扫描明细
+    const caseDetailData = base.state.tableData.filter((item: any) => item.caseNumber === caseNumber && Number(item.finishedQuantity) > 0);
+    if (!caseDetailData || caseDetailData.length === 0) continue;
+
+    // 生成唯一 keyName
+    const keyName = `caseList_${caseNumber}_${Date.now()}_${index}_${Math.random().toString(36).slice(2, 8)}`;
+
+    // 组装静态数据
+    const totalFinishedQty = caseDetailData.reduce((sum: number, item: any) => sum + (Number(item.finishedQuantity) || 0), 0);
+
+    const mainRecord = {
+      ...caseRecord,
+      totalQuantityOrder: totalFinishedQty,
+    };
+    const detailRecords = caseDetailData.map((item: any, idx: number) => ({
+      ...item,
+      index: idx + 1,
+      quantityOrder: item.finishedQuantity,
+    }));
+
+    const printData: any = {};
+    printData['mainData'] = mainRecord;
+    printData['out_order_detail'] = detailRecords;
+    Object.assign(printData, mainRecord); // 兼容模板直接访问字段的场景
+
+    // 保存到 sessionStorage，供 loadStaticBillData 使用
+    const storageKey = `static_${keyName}`;
+    sessionStorage.setItem(storageKey, JSON.stringify([printData]));
+    registerPrintTemplateKey('caseList', storageKey);
+
+    // 调用打印，使用静态数据，并等待组件加载完成
+    await new Promise<void>((resolve) => {
+      printBill(
+        config.menuId as any,
+        templateId,
+        '',
+        printName || undefined,
+        true,
+        keyName,
+        false,
+        () => {
+          resolve();
+        },
+        'caseList'
+      );
+    });
+
+    await nextTick();
+  }
+  // 标记装箱清单已打印
+  state.hasPrintContent.caseList = true;
+};
+
+// 打印箱标签
+const printCaseLabel = async () => {
+  const targetCases = getPrintableCaseRows();
+  if (!targetCases || targetCases.length === 0) {
+    proxy.$message.warning('没有可打印的装箱记录');
+    return;
+  }
+
+  clearPrintTemplateData('caseLabel');
+
+  const billPrintSettings = state.scanSetting.billPrintSettings || [];
+  const printSetting = billPrintSettings.find((item: any) => item.name === '打印箱标签');
+  if (!printSetting) {
+    proxy.$message.error('请先在应用场景设置中配置打印箱标签的模板');
+    return;
+  }
+
+  const templateId = String(printSetting.templateName);
+  if (!templateId) {
+    proxy.$message.error('请先在应用场景设置中关联打印箱标签的模板');
+    return;
+  }
+  const printName = printSetting.printName || '';
+  const config = printTypeConfigMap.caseNumber;
+  if (!config) {
+    proxy.$message.error('打印箱标签配置不存在');
+    return;
+  }
+
+  // 顺序处理每个箱号
+  for (let index = 0; index < targetCases.length; index++) {
+    const caseRecord = targetCases[index];
+    const caseNumber = caseRecord.caseNumber;
+    if (!caseNumber) continue;
+
+    // 根据箱号筛选扫描明细
+    const caseDetailData = base.state.tableData.filter((item: any) => item.caseNumber === caseNumber && Number(item.finishedQuantity) > 0);
+    if (!caseDetailData || caseDetailData.length === 0) continue;
+
+    // 生成唯一 keyName
+    const keyName = `caseList_${caseNumber}_${Date.now()}_${index}_${Math.random().toString(36).slice(2, 8)}`;
+
+    // 组装静态数据
+    const totalFinishedQty = caseDetailData.reduce((sum: number, item: any) => sum + (Number(item.finishedQuantity) || 0), 0);
+
+    const mainRecord = {
+      ...caseRecord,
+      totalQuantityOrder: totalFinishedQty,
+    };
+    const detailRecords = caseDetailData.map((item: any, idx: number) => ({
+      ...item,
+      index: idx + 1,
+      quantityOrder: item.finishedQuantity,
+    }));
+
+    const printData: any = {};
+    printData['mainData'] = mainRecord;
+    printData['out_order_detail'] = detailRecords;
+    Object.assign(printData, mainRecord); // 兼容模板直接访问字段的场景
+
+    // 保存到 sessionStorage，供 loadStaticBillData 使用
+    const storageKey = `static_${keyName}`;
+    sessionStorage.setItem(storageKey, JSON.stringify([printData]));
+    registerPrintTemplateKey('caseLabel', storageKey);
+
+    // 调用打印，使用静态数据，并等待组件加载完成
+    await new Promise<void>((resolve) => {
+      printBill(
+        config.menuId as any,
+        templateId,
+        '',
+        printName || undefined,
+        true,
+        keyName,
+        false,
+        () => {
+          resolve();
+        },
+        'caseLabel'
+      );
+    });
+
+    await nextTick();
+  }
+  // 标记箱标签已打印
+  state.hasPrintContent.caseLabel = true;
+};
+
+const clearAllPrintTemplates = () => {
+  clearPrintTemplateData('caseList');
+  clearPrintTemplateData('caseLabel');
+  clearPrintContainers('expressBill');
+  clearPrintContainers('orderList');
+  clearPrintContainers('caseNumber');
+  clearPrintContainers();
+  resetPrintStatus();
+  state.hasPrintContent.caseList = false;
+  state.hasPrintContent.caseLabel = false;
+};
+
+const toggleExpressBill = async () => {
+  if (state.printStatus.expressBill) {
+    clearPrintContainers('expressBill');
+    state.printStatus.expressBill = false;
+    return;
+  }
+  const success = await reprintBillByType('expressBill');
+  if (success) {
+    state.printStatus.expressBill = true;
+  }
+};
+
+const toggleOrderListBill = async () => {
+  if (state.printStatus.orderList) {
+    clearPrintContainers('orderList');
+    state.printStatus.orderList = false;
+    return;
+  }
+  const success = await reprintBillByType('orderList');
+  if (success) {
+    state.printStatus.orderList = true;
+  }
+};
+
+const clearCaseListTemplatesOnly = () => {
+  clearPrintTemplateData('caseList');
+};
+
+const clearCaseLabelTemplatesOnly = () => {
+  clearPrintTemplateData('caseLabel');
+};
+
+const reprintBillByType = async (type: 'expressBill' | 'orderList') => {
+  if (!state.formData.orderId) {
+    proxy.$message.warning('请先加载出库单号');
+    return false;
+  }
+
+  const config = printTypeConfigMap[type];
+  if (!config) return false;
+
+  const billPrintSettings = state.scanSetting.billPrintSettings || [];
+  const printSetting = billPrintSettings.find((item: any) => item.name === config.name);
+  if (!printSetting) {
+    proxy.$message.warning(`请在应用场景设置中配置${config.name}`);
+    return false;
+  }
+
+  const templateId = Number(printSetting.templateName);
+  if (!templateId || Number.isNaN(templateId)) {
+    proxy.$message.warning(`请在应用场景设置中关联${config.name}模板`);
+    return false;
+  }
+
+  clearPrintContainers(config.tag);
+
+  await new Promise<void>((resolve) => {
+    printBill(config.menuId as any, templateId as any, state.formData.orderId as any, (printSetting.printName as any) || undefined, true, undefined, true, () => resolve(), config.tag);
+  });
+  return true;
+};
+
+const resetPrintStatus = () => {
+  state.printStatus.expressBill = false;
+  state.printStatus.orderList = false;
+};
+
+// 检查是否有任何打印内容
+const hasAnyPrintContent = computed(() => {
+  return state.printStatus.expressBill || state.printStatus.orderList || state.hasPrintContent.caseList || state.hasPrintContent.caseLabel;
+});
+
+// 检查是否应该显示打印工具栏（只要有勾选的打印单据或已有打印内容）
+const shouldShowPrintToolBar = computed(() => {
+  return hasExpressBillSetting.value || hasOrderListSetting.value || hasAnyPrintContent.value;
+});
+
+// 检查是否勾选了打印物流面单（需要先扫描出库单号）
+const hasExpressBillSetting = computed(() => {
+  return state.formData.orderId && state.scanSetting.printBill && state.scanSetting.printBill.includes('expressBill');
+});
+
+// 检查是否勾选了打印出库清单（需要先扫描出库单号）
+const hasOrderListSetting = computed(() => {
+  return state.formData.orderId && state.scanSetting.printBill && state.scanSetting.printBill.includes('orderList');
+});
+
+// 检查是否有打印装箱清单的内容
+const hasCaseListPrint = computed(() => {
+  return state.hasPrintContent.caseList;
+});
+
+// 检查是否有打印箱标签的内容
+const hasCaseLabelPrint = computed(() => {
+  return state.hasPrintContent.caseLabel;
+});
 </script>
 
 <style lang="scss" scoped>
 @import '/@/theme/scan.scss';
+
 .justify-start {
   display: flex;
   justify-content: flex-start;
   position: relative;
 }
+
 .msg-tip {
   margin-left: 20px !important;
   max-width: 400px;
@@ -1264,23 +1864,36 @@ const printBill = () => {
   top: -5px;
   left: 120px;
 }
+
 .dialog-footer {
   text-align: left;
 }
+
 .scan-result {
   margin-top: 10px;
+
   ::v-deep .el-card__header {
     padding: 8px 20px 10px;
   }
+
   .scan-result-header {
     font-size: 14px;
   }
+
   ::v-deep .el-button--medium {
     padding: 5px 20px;
   }
+
   ::v-deep .el-input-number.is-controls-right .el-input__inner {
     padding-left: 2px;
     padding-right: 28px;
   }
+}
+
+.print-tool-bar {
+  margin: 10px 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
 }
 </style>

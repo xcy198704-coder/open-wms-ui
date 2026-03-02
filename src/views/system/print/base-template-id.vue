@@ -9,7 +9,7 @@
             <div class="canvas-content">
               <draggable v-model="state.vueData.fields" item-key="index" group="people" ghost-class="ghost" filter=".detail-table" class="drag-list">
                 <template #item="{ element, index }">
-                  <draggableResizable v-if="methods.fieldShow(element, pageIndex, pageCount(billDataInfo))" :style="'z-index:' + element.options.z" :resizable="false" :draggable="false" v-bind.sync="methods.elementOptions(element, pageIndex, pageCount(billDataInfo), index0)" class="resable-item">
+                  <draggableResizable v-if="methods.fieldShow(element, pageIndex, pageCount(billDataInfo))" :style="'z-index:' + element.options.z" :resizable="false" :draggable="false" v-bind="methods.elementOptions(element, pageIndex, pageCount(billDataInfo), index0)" class="resable-item">
                     <template v-if="element.type == 'table'">
                       <!-- 显示为文本 -->
                       <div v-if="element.onlyOnline">
@@ -103,7 +103,7 @@
                                   {{ subField.element.label.title }}
                                   <template v-if="subField.element.label.showColon">：</template>
                                 </div>
-                                <div :style="subField.element.text.styles" class="text">{ {{ subField.element.text.prop }} }</div>
+                                <div :style="subField.element.text.styles" class="text">{{ subField.element.text.prop }}</div>
                               </div>
                             </div>
                           </template>
@@ -167,25 +167,23 @@
         </template>
       </template>
     </div>
-    <el-form v-if="!props.menuId" class="padding-top-20 no-print" style="position: fixed; left: 10px; bottom: 10px">
-      <el-form-item>
-        <el-button v-if="!onlyLodop" type="primary" @click="methods.printBill">打印</el-button>
-        <!-- <el-button type="primary" @click="methods.lodopPrint()">LODOP直接打印</el-button>
-				<el-button type="primary" @click="methods.lodopPrint('preview')">LODOP打印预览</el-button> -->
-        <!-- <el-button v-if="!onlyLodop" type="primary" @click="methods.exportPDF">导出JPG图片</el-button> -->
-        <span class="ml-10">共：{{ state.billDataList.length }}张</span>
+
+    <el-form class="print-tool no-print" :style="!props.menuId && !state.isPda ? 'position: fixed; left: 20px; bottom: 10px' : 'margin: 0 20px'">
+      <el-form-item style="margin-bottom: 0">
+        <el-button v-if="!onlyLodop && !props.menuId && !state.isPda" type="primary" @click="methods.printBill">打印</el-button>
+        <el-button v-if="props.menuId" type="primary" @click="methods.printBill()">LODOP直接打印</el-button>
+        <span v-if="!props.menuId && !state.isPda" class="ml-10">共：{{ state.billDataList.length }}张</span>
       </el-form-item>
     </el-form>
   </div>
 </template>
 
 <script setup lang="ts" name="base-template-id">
-import { toRefs, reactive, getCurrentInstance, ComponentInternalInstance, onMounted, computed } from 'vue';
+import { toRefs, reactive, getCurrentInstance, ComponentInternalInstance, onMounted, computed, ref } from 'vue';
 import draggable from 'vuedraggable';
 import draggableResizable from '/@/components/base/draggable-resizable/index.js';
 import vueBarcode from '/@/utils/vue-barcode.js';
 import vueQrcode from '@chenfengyuan/vue-qrcode';
-// import { getLodop } from '/@/utils/LodopFuncs.js';
 import $ from 'jquery';
 import moment from 'moment';
 import { DataType, QueryType, QueryBo } from '/@/types/common';
@@ -194,14 +192,25 @@ import { BaseProperties } from '/@/types/base-type';
 import to from 'await-to-js';
 import { postData } from '/@/api/common/baseApi';
 import common from '/@/utils/common';
+import { getLodop } from '/@/utils/lodopFuncs.js';
 let ins = getCurrentInstance() as ComponentInternalInstance;
 let proxy = ins.proxy as BaseProperties;
+
+// 定义模板 ref
+const container = ref<HTMLElement | null>(null);
+const emit = defineEmits(['loaded']);
 
 //#region 定义属性
 const props = defineProps({
   // 打印模板ID
   menuId: {
     type: String,
+    required: false,
+    default: '',
+  },
+  // 打印模板明细ID
+  tid: {
+    type: [String, Number],
     required: false,
     default: '',
   },
@@ -242,6 +251,12 @@ const props = defineProps({
     type: Array,
     required: false,
   },
+  // 是否为PDA设备
+  isPda: {
+    type: Boolean,
+    required: false,
+    default: false,
+  },
 });
 //#endregion
 
@@ -259,8 +274,18 @@ const state = reactive({
   // 单据数据列表
   billDataList: [] as any[],
   outerHTML: '',
+  isPda: false,
   webAutoPrint: false,
+  hasAutoPrinted: false,
+  hasLoaded: false,
 });
+
+const notifyLoaded = () => {
+  if (!state.hasLoaded && state.billDataList.length) {
+    state.hasLoaded = true;
+    emit('loaded');
+  }
+};
 //#endregion
 
 //#region 计算属性
@@ -398,6 +423,9 @@ const currentPageData = computed(() => {
 //数据格式化
 const formattingData = (subTableInfo: any, dataList: any) => {
   for (const item of dataList) {
+    // 确保expandFields已经合并到item中
+    mergeExpandFields(item);
+
     Object.keys(item).forEach((key) => {
       let keyInfo = subTableInfo.fields.find((i: any) => i.prop.toLowerCase() == key.toLowerCase());
       //查询只在页面显示的列,并且还配置了格式化
@@ -478,24 +506,61 @@ const printQtys = computed(() => {
 
 // 自动打印
 const webAutoPrint = computed(() => {
-  const autoPrint = proxy.$route.query.autoPrint === 'true';
+  const autoPrint = proxy.$route?.query?.autoPrint === 'true';
   return autoPrint;
 });
 //#endregion
 
 //#region onMounted
 onMounted(async () => {
+  // 优先使用 props 传入的参数，如果没有则使用 URL 参数
+  if (typeof props.isPda !== 'undefined') {
+    state.isPda = props.isPda;
+  } else if (proxy.$route?.query?.isPda) {
+    state.isPda = proxy.$route.query.isPda === 'true';
+  }
   state.billDataList = [];
   await methods.loadModuleData();
   await methods.loadStaticBillData(); // 加载静态数据
+
+  // 如果只加载静态数据，也需要检查自动打印
+  if (state.billDataList.length > 0) {
+    methods.checkAutoPrint();
+  }
 });
 //#endregion
 
 //#region 方法
+
+/**
+ * 合并expandFields到主对象
+ * 将JSON字符串或对象形式的expandFields字段合并到主数据对象中
+ * 这样在打印时就可以直接访问expandFields中的字段
+ * @param item 包含expandFields的数据对象
+ * @returns 合并后的数据对象
+ */
+const mergeExpandFields = (item: any) => {
+  if (item.expandFields) {
+    let expandFields = item.expandFields;
+    if (typeof expandFields !== 'object') {
+      try {
+        expandFields = JSON.parse(expandFields);
+      } catch (error) {
+        console.warn('解析expandFields失败:', error);
+        expandFields = {};
+      }
+    }
+    Object.assign(item, expandFields);
+  }
+  return item;
+};
+
 let methods = {
   // 加载打印模板信息
   async loadModuleData() {
-    const tid = Number(proxy.$route?.params?.tid);
+    const propTid = props.tid ? Number(props.tid) : 0;
+    const routeTid = proxy.$route?.params?.tid ? Number(proxy.$route?.params?.tid) : 0;
+    const tid = propTid > 0 ? propTid : routeTid;
     const menuId: any = props.menuId || proxy.$route?.params?.menuId;
     // 查询条件
     let queryBoList: Array<QueryBo> = [];
@@ -519,7 +584,7 @@ let methods = {
       ];
     }
     let url = '/system/core/printTemplate/selectOne';
-    const [err, res] = await to(postData(url, queryBoList));
+    const [err, res] = await to(postData(url, queryBoList, { repeatSubmit: false }));
     if (err) {
       return;
     }
@@ -544,26 +609,37 @@ let methods = {
           }
         }
       }
+      // 优先使用 props 传入的参数，如果没有则使用 URL 参数
       let isAutoLoad: Boolean = false;
-      if (typeof proxy.$route.query.isAutoLoad !== 'undefined') {
-        // 如果url传参直接，使用url参数
-        isAutoLoad = proxy.$route.query.isAutoLoad === 'true';
-      } else {
+      if (typeof props.isAutoLoad !== 'undefined') {
         // 组件使用传参
         isAutoLoad = props.isAutoLoad;
+      } else if (proxy.$route?.query && typeof proxy.$route.query.isAutoLoad !== 'undefined') {
+        // 如果url传参，使用url参数
+        isAutoLoad = proxy.$route.query.isAutoLoad === 'true';
       }
       if (isAutoLoad) {
         // 从标准通用接口里面获取数据
         await methods.loadStandardBillData();
         // 处理二维码数据
         for (let row of state.billDataList) {
-          if (!state.vueData.dataOptions.idField) {
-            proxy.$message.error('未设置主键！');
+          if (!state.vueData || !state.vueData.dataOptions || !state.vueData.dataOptions.idField) {
+            const errorMsg = '未设置主键！';
+            if (proxy.$message) {
+              proxy.$message.error(errorMsg);
+            } else {
+              console.error(errorMsg);
+            }
             return '';
           }
           let idValue = row[state.vueData.dataOptions.idField];
           if (!idValue) {
-            proxy.$message.error('主键值不存在！');
+            const errorMsg = '主键值不存在！';
+            if (proxy.$message) {
+              proxy.$message.error(errorMsg);
+            } else {
+              console.error(errorMsg);
+            }
             return '';
           }
           if (getTempTokenUrl) {
@@ -582,9 +658,13 @@ let methods = {
   },
   // 加载标准通用单据数据
   async loadStandardBillData() {
+    if (!state.vueData || !state.vueData.dataOptions) {
+      console.error('打印模板数据未加载');
+      return;
+    }
     const url = state.vueData.dataOptions.router;
     if (!url) return;
-    let ids: any = props.ids || proxy.$route.params.ids;
+    let ids: any = props.ids || proxy.$route?.params?.ids;
     if (!ids) return;
 
     let idList = ids.split(',');
@@ -623,20 +703,12 @@ let methods = {
           }
           // 扩展字段处理
           state.billDataList.forEach((item) => {
-            let expandFields = item.expandFields;
-            if (typeof expandFields !== 'object') {
-              expandFields = JSON.parse(expandFields);
-            }
-            item = Object.assign(item, expandFields);
+            mergeExpandFields(item);
           });
           continue;
         }
         let mainData = res.data;
-        let expandFields = mainData.expandFields;
-        if (typeof expandFields !== 'object') {
-          expandFields = JSON.parse(mainData.expandFields);
-        }
-        mainData = Object.assign({}, expandFields, mainData);
+        mainData = mergeExpandFields(mainData);
 
         if (!mainData) {
           proxy.$message.error('没有加载到标准打印配置信息！');
@@ -661,18 +733,16 @@ let methods = {
           state.billDataList.push(common.deepCopy(mainData));
         }
 
-        // lodop 自动打印
-        if (props.isAutoPrint) {
-          proxy.$nextTick(() => {
-            methods.lodopPrint();
-          });
-        }
         // web 自动打印
         if (state.webAutoPrint) {
           window.setTimeout(() => {
             methods.printCount(); // 记录打印次数
           }, 800);
         }
+
+        // 检查是否需要自动打印（根据 props.isAutoPrint）
+        methods.checkAutoPrint();
+        notifyLoaded();
       } else {
         proxy.$message.error(res.msg);
       }
@@ -688,10 +758,17 @@ let methods = {
     if (data) {
       let mainData = JSON.parse(data);
       if (Array.isArray(mainData)) {
+        // 处理数组中的每个对象的expandFields
+        mainData.forEach((item: any) => {
+          mergeExpandFields(item);
+        });
         state.billDataList.push(...mainData);
       } else {
+        // 处理单个对象的expandFields
+        mergeExpandFields(mainData);
         state.billDataList.push(mainData);
       }
+      notifyLoaded();
     }
   },
   // 加载标准通用单据明细数据
@@ -720,11 +797,7 @@ let methods = {
       }
 
       subTableData.forEach((item: any) => {
-        let expandFields = item.expandFields;
-        if (typeof expandFields !== 'object') {
-          expandFields = JSON.parse(item.expandFields);
-        }
-        item = Object.assign({}, expandFields, item);
+        mergeExpandFields(item);
       });
 
       this.sortData(subTableInfo.tableName, subTableData); // 先按照指定字段排序
@@ -762,78 +835,142 @@ let methods = {
   },
   // 打印单据
   printBill() {
-    $('.canvas-container').last().removeClass('page-next');
-    window.print();
-  },
-  // lodop打印
-  lodopPrint(type?: any) {
-    const LODOP = {} as any; // getLodop();
-    const width = state.vueData.dataOptions.width + 1 + 'mm';
-    const height = state.vueData.dataOptions.height + 1 + 'mm';
-    LODOP.SET_LICENSES('达令心潮(北京)商贸有限公司', 'B95259F540E2C256132EC7CE6AB55737', '', '');
-    LODOP.PRINT_INITA(0, 0, width, height, '面单打印');
-    LODOP.SET_PRINT_PAGESIZE(1, width, height, '面单打印');
-
-    let canvas = $("div[print-name='" + props.printName + "'].print-list-container .canvas-container");
-    if (canvas.length === 0) {
-      proxy.$message.error('没有可打印的内容！！！！');
-      return;
+    // 只操作当前组件的元素，避免影响其他模板
+    if (container.value) {
+      const lastCanvas = container.value.querySelector('.canvas-container:last-child');
+      if (lastCanvas) {
+        lastCanvas.classList.remove('page-next');
+      }
     }
 
-    canvas.each(function () {
-      const dataindex = $(proxy).attr('dataindex') as any;
-      LODOP.NEWPAGE();
-      const content = '<style>' + _style + '</style>' + state.outerHTML;
-      LODOP.ADD_PRINT_HTM('0mm', '0mm', width, height, content);
-
-      const billInfo = state.billDataList[dataindex];
-      if (!state.vueData.fields) return;
-
-      state.vueData.fields.forEach((item: any) => {
-        if (item.type === 'barcode') {
-          const prop = common.caseStyle(item.barcode.value);
-          const val = methods.getMainData(billInfo, state.vueData, prop, item);
-          const lodopBarcode = item.barcode.options.lodopBarcode || '128A';
-          LODOP.ADD_PRINT_BARCODE(item.options.y + item.barcode.options.textMargin + 10, item.options.x, item.options.w - item.barcode.options.textMargin - 10, item.barcode.options.height + 10, lodopBarcode, val);
-        } else if (item.type === 'qrcode') {
-          const prop = common.caseStyle(item.qrOptions.value);
-          let val = methods.getMainData(billInfo, state.vueData, prop);
-          if (!val) {
-            val = item.qrOptions.value;
-          }
-          LODOP.ADD_PRINT_BARCODE(item.options.y + item.qrOptions.margin, item.options.x + item.qrOptions.margin, item.qrOptions.width, item.qrOptions.width, 'QRCode', val);
-        }
-      });
-    });
-    // 导出PDF
-    if (type === 'pdf') {
-      LODOP.SET_PRINTER_INDEXA('Microsoft print to PDF');
-      LODOP.PRINT();
+    // 如果指定了打印机名称，使用 lodop 打印
+    if (props.printName && props.printName !== 'print-page') {
+      methods.lodopPrint();
     } else {
-      // 指定打印机
-      if (props.printName) {
-        LODOP.SET_PRINTER_INDEXA(props.printName);
-      }
-      if (type === 'preview') {
-        LODOP.PREVIEW();
-      } else {
-        LODOP.PRINT();
-      }
+      // 否则使用浏览器打印
+      window.print();
     }
   },
-  // 导出PDF
-  exportPDF() {
-    const LODOP = null as any; // getLodop();
-    const exist = LODOP.SET_PRINTER_INDEXA('Microsoft print to PDF');
-    if (!exist) {
-      window.alert('未安装PDF镜像打印机，请按照弹出窗口安装PDF镜像打印机');
-      window.open('https://jingyan.baidu.com/article/59a015e373b154f795886555.html');
-      return;
+  // lodop 打印
+  lodopPrint() {
+    try {
+      const LODOP = getLodop();
+      if (!LODOP || !LODOP.VERSION) {
+        if (proxy.$message) {
+          proxy.$message.warning('打印控件未安装，将使用浏览器打印');
+        } else {
+          console.warn('打印控件未安装，将使用浏览器打印');
+        }
+        window.print();
+        return;
+      }
+
+      // 设置打印任务名称
+      LODOP.PRINT_INIT('打印任务');
+
+      // 如果指定了打印机名称，设置打印机
+      if (props.printName && props.printName !== 'print-page') {
+        try {
+          // 尝试通过打印机名称设置打印机
+          const printerCount = LODOP.GET_PRINTER_COUNT();
+          if (printerCount && printerCount > 0) {
+            let printerIndex = -1;
+
+            // 遍历所有打印机，找到匹配的打印机
+            for (let i = 0; i < printerCount; i++) {
+              try {
+                const printerName = LODOP.GET_PRINTER_NAME(i);
+                if (printerName === props.printName) {
+                  printerIndex = i;
+                  break;
+                }
+              } catch (e) {
+                // 忽略单个打印机获取失败
+                continue;
+              }
+            }
+
+            if (printerIndex >= 0) {
+              LODOP.SET_PRINTER_INDEX(printerIndex);
+            } else {
+              // 如果找不到指定的打印机，尝试直接使用打印机名称
+              try {
+                LODOP.SET_PRINTER_INDEXA(props.printName);
+              } catch (e) {
+                console.warn('设置打印机失败，使用默认打印机:', e);
+              }
+            }
+          }
+        } catch (e) {
+          console.warn('获取打印机列表失败，使用默认打印机:', e);
+        }
+      }
+
+      // 获取打印内容 - 使用组件自身的 ref，而不是全局选择器
+      const printContainerElement = container.value;
+      if (!printContainerElement) {
+        const errorMsg = '没有可打印的内容';
+        if (proxy.$message) {
+          proxy.$message.error(errorMsg);
+        } else {
+          console.error(errorMsg);
+        }
+        return;
+      }
+
+      const printContent = printContainerElement.innerHTML;
+      if (!printContent) {
+        const errorMsg = '没有可打印的内容';
+        if (proxy.$message) {
+          proxy.$message.error(errorMsg);
+        } else {
+          console.error(errorMsg);
+        }
+        return;
+      }
+
+      // 拼装打印内容，包含必要的样式，防止打印变形
+      const printHtml = `
+        <html>
+          <head>
+            <meta charset="utf-8" />
+            <style>
+              body {
+                margin: 0;
+                font-family: 'Microsoft YaHei', Arial, sans-serif;
+                -webkit-print-color-adjust: exact;
+              }
+              ${_style}
+            </style>
+          </head>
+          <body>
+            ${printContent}
+          </body>
+        </html>
+      `;
+
+      // 添加打印内容
+      LODOP.ADD_PRINT_HTML(0, 0, '100%', '100%', printHtml);
+
+      // 执行打印
+      LODOP.PRINT();
+    } catch (error: any) {
+      console.error('Lodop打印失败:', error);
+      const errorMsg = '打印失败：' + (error?.message || '未知错误');
+      if (proxy.$message) {
+        proxy.$message.error(errorMsg);
+      } else {
+        console.error(errorMsg);
+      }
+      // 失败时回退到浏览器打印
+      window.print();
     }
-    methods.lodopPrint('pdf');
   },
   // 获得主表数据，先从主表获得，如果没有从otherData中获取
   getMainData(billDataInfo: any, vueData: any, _prop: any, element?: any) {
+    if (!billDataInfo || !vueData || !vueData.dataOptions) {
+      return '';
+    }
     let masterData = billDataInfo[vueData.dataOptions.tableName];
     if (!masterData) masterData = billDataInfo;
 
@@ -1071,9 +1208,9 @@ let methods = {
   },
   // 记录打印次数
   async printCount() {
-    const menuId = proxy.$route.params.menuId;
-    const ids = proxy.$route.params.ids;
-    const tid = proxy.$route.params.tid;
+    const menuId = proxy.$route?.params?.menuId;
+    const ids = proxy.$route?.params?.ids;
+    const tid = proxy.$route?.params?.tid;
     const url = '/api/sys/print/printCount';
     const params = {
       menuId: menuId,
@@ -1098,8 +1235,43 @@ let methods = {
 
     return stringExpress;
   },
+  // 检查是否需要自动打印
+  checkAutoPrint() {
+    // 优先使用 props 传入的参数，如果没有则使用 URL 参数
+    let shouldAutoPrint = false;
+    if (typeof props.isAutoPrint !== 'undefined') {
+      // 组件使用传参
+      shouldAutoPrint = props.isAutoPrint;
+    } else if (proxy.$route?.query && typeof proxy.$route.query.autoPrint !== 'undefined') {
+      // 如果url传参，使用url参数
+      shouldAutoPrint = proxy.$route.query.autoPrint === 'true';
+    }
+
+    // 如果没有数据，不执行自动打印
+    if (!state.billDataList || state.billDataList.length === 0) {
+      return;
+    }
+
+    if (state.hasAutoPrinted) {
+      return;
+    }
+
+    // 如果需要自动打印，延迟执行以确保 DOM 渲染完成
+    if (shouldAutoPrint) {
+      // 等待 DOM 渲染完成后再打印
+      window.setTimeout(() => {
+        methods.printBill();
+      }, 500);
+      state.hasAutoPrinted = true;
+    }
+  },
 };
 //#endregion
+
+// 导出 methods 供外部访问
+defineExpose({
+  ...methods,
+});
 
 const _style = `
   .vdr {
@@ -1295,11 +1467,13 @@ body,
   -webkit-box-shadow: 0px 0px 10px #3d3d3d;
   box-shadow: 0px 0px 10px #3d3d3d;
   margin: 20px;
+
   .canvas-content {
     .drag-list {
       height: 100%;
       position: relative;
     }
+
     height: 100%;
     padding-bottom: 0px;
     border: 1px none #000000;
@@ -1315,6 +1489,7 @@ body,
       right: 0;
       bottom: -30px;
     }
+
     //  .active {
     //    background-color: rgb(213, 234, 255);
     //    > .tool {
@@ -1325,12 +1500,14 @@ body,
       overflow: hidden;
       white-space: nowrap;
       display: flex;
+
       .label {
         width: 120px;
         display: inline-block;
         text-align: right;
         color: #000000;
       }
+
       .text {
         display: inline-block;
       }
@@ -1357,6 +1534,7 @@ body,
     border: 1px solid #dcdfe6;
     background-color: white;
     width: 100%;
+
     th,
     td {
       font-weight: normal;
@@ -1364,24 +1542,29 @@ body,
       border-collapse: collapse;
       border: 1px solid #dcdfe6;
       padding: 3px 2px;
+
       .cell {
         min-height: 20px;
         word-break: break-all;
         word-wrap: break-word;
         line-height: 20px;
       }
+
       &.drag-active {
         background-color: rgb(213, 234, 255);
+
         .tool {
           display: block;
         }
       }
     }
+
     tfoot td {
       border-collapse: collapse;
       border: 0px solid #dcdfe6;
       // font-weight: bold;
     }
+
     .no-detail-row {
       text-align: center;
       color: #888;
@@ -1394,18 +1577,22 @@ body,
   body {
     height: auto !important;
   }
+
   .canvas-container {
     -moz-box-shadow: none;
     -webkit-box-shadow: none;
     box-shadow: none;
     margin: 0px;
+
     .canvas-content {
       border: 0px dotted #000000;
     }
   }
+
   .no-print {
     display: none;
   }
+
   .page-next {
     page-break-after: always;
   }

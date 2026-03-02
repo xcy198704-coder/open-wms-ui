@@ -1691,31 +1691,6 @@
             "fields": [
               {
                 "type": "input",
-                "label": "是否生成费用",
-                "dataType": "byte",
-                "icon": "yrt-danhangshurukuang",
-                "options": {
-                  "dataType": "byte",
-                  "prop": "isCreateFee",
-                  "searchRowNo": 0,
-                  "width": "100%",
-                  "noLabel": false,
-                  "defaultValue": "",
-                  "required": false,
-                  "pattern": "",
-                  "placeholder": "",
-                  "readonly": true
-                },
-                "key": "1699408916772_52773",
-                "model": "input_1699408916772_52773"
-              }
-            ]
-          },
-          {
-            "span": 8,
-            "fields": [
-              {
-                "type": "input",
                 "label": "合计件数",
                 "dataType": "bigDecimal",
                 "icon": "yrt-danhangshurukuang",
@@ -1732,8 +1707,8 @@
                   "readonly": true,
                   "formatter": "0.##"
                 },
-                "key": "1700620342555_780",
-                "model": "input_1700620342555_780"
+                "key": "1766643420859_54078",
+                "model": "input_1766643420859_54078"
               }
             ]
           },
@@ -1758,10 +1733,14 @@
                   "readonly": true,
                   "formatter": "0.##"
                 },
-                "key": "1700620324758_83910",
-                "model": "input_1700620324758_83910"
+                "key": "1766643422504_92517",
+                "model": "input_1766643422504_92517"
               }
             ]
+          },
+          {
+            "span": 8,
+            "fields": []
           }
         ],
         "options": {

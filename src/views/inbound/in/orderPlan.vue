@@ -18,7 +18,7 @@
     </yrt-data-list>
 
     <!--数据编辑器Editor-->
-    <yrt-editor :ref="editorInfo.refName" :editor-type="state.dataOptions.editorType" v-model:action="editorInfo.action" :data-list-ref="dataListRefName" v-model:config="state.editorOptions.config" :data-options="state.dataOptions" :editorOptions="state.editorOptions" :detail-button-click="base.detailButtonClick" :auth-nodes="state.authNodes" :on-save-before="base.onSaveBefore" @on-save-after="base.onSaveAfter" @on-change="base.onChange" @on-detail-change="base.onDetailChange" @on-edit-load-before="base.onEditLoadBefore" @on-edit-load-after="base.onEditLoadAfter" :btn-read-only="state.btnReadOnly"></yrt-editor>
+    <yrt-editor :ref="editorInfo.refName" :editor-type="state.dataOptions.editorType" v-model:action="editorInfo.action" :data-list-ref="dataListRefName" v-model:config="state.editorOptions.config" :data-options="state.dataOptions" :editorOptions="state.editorOptions" :detail-button-click="base.detailButtonClick" :auth-nodes="state.authNodes" :on-save-before="base.onSaveBefore" @on-save-after="base.onSaveAfter" @on-change="base.onChange" @on-detail-change="base.onDetailChange" @on-edit-load-before="base.onEditLoadBefore" @on-edit-load-after="base.onEditLoadAfter" :btn-read-only="state.btnReadOnly" @on-row-change="base.onRowChange"></yrt-editor>
 
     <!-- 商品选择器 -->
     <yrt-selector ref="selector-dialog" :config="state.selectorConfig" v-model:visible="state.selectorConfig.visible" @on-selected="onSelected"></yrt-selector>
@@ -98,6 +98,35 @@ base.detailButtonClick = (authNode: string, detail: any, btnOpts: any) => {
     case 'detailAdd':
       detailAdd();
       return true;
+  }
+};
+
+// 字段值改变事件
+base.onRowChange = (ref: any, val: any, field: any, formData: any) => {
+  debugger;
+  if (field.options.prop === 'consignorName') {
+    base.detailRows.value?.forEach((item: any) => {
+      item.consignorName = val.consignorName;
+      item.consignorCode = val.consignorCode;
+      item.consignorId = val.consignorId;
+      item.__ischange__ = true;
+    });
+  }
+  if (field.options.prop === 'storageName') {
+    base.detailRows.value?.forEach((item: any) => {
+      item.storageId = val.storageId;
+      item.storageCode = val.storageCode;
+      item.storageName = val.storageName;
+      item.__ischange__ = true;
+    });
+  }
+  if (field.options.prop === 'providerShortName') {
+    base.detailRows.value?.forEach((item: any) => {
+      item.providerCode = val.providerCode;
+      item.providerId = val.providerId;
+      item.providerShortName = val.providerShortName;
+      item.__ischange__ = true;
+    });
   }
 };
 

@@ -27,6 +27,29 @@
     "fields": [
       {
         "type": "input",
+        "label": "货主ID",
+        "dataType": "long",
+        "icon": "yrt-danhangshurukuang",
+        "options": {
+          "searchRowNo": 0,
+          "width": "100%",
+          "noLabel": false,
+          "defaultValue": "",
+          "required": false,
+          "pattern": "",
+          "placeholder": ""
+        },
+        "prop": "consignorId",
+        "sortable": false,
+        "hidden": true,
+        "isQuickSearch": false,
+        "align": "center",
+        "headerAlign": "center",
+        "key": "1764568840665_87959",
+        "tagColorList": []
+      },
+      {
+        "type": "input",
         "label": "入库计划单号",
         "dataType": "string",
         "icon": "yrt-danhangshurukuang",
@@ -85,7 +108,7 @@
         "dataType": "string",
         "sortable": false,
         "hidden": false,
-        "isQuickSearch": false,
+        "isQuickSearch": true,
         "key": "1697275878514_6550",
         "tagColorList": [],
         "align": "center",
@@ -140,6 +163,27 @@
         "keyProp": "consignorId",
         "clearable": true,
         "filterable": true
+      },
+      {
+        "type": "datetime",
+        "label": "日期时间选择器",
+        "icon": "yrt-rili2",
+        "options": {
+          "width": "100%",
+          "defaultValue": "",
+          "readonly": false,
+          "disabled": false,
+          "editable": true,
+          "clearable": true,
+          "placeholder": "",
+          "startPlaceholder": "",
+          "endPlaceholder": "",
+          "type": "datetime",
+          "format": "YYYY-MM-DD HH:mm:ss",
+          "timestamp": false,
+          "required": false,
+          "noLabel": false
+        }
       },
       {
         "type": "input",
@@ -1139,9 +1183,9 @@
             "label": "仓库名称",
             "dataType": "string",
             "sortable": false,
-            "hidden": false,
+            "hidden": true,
             "isQuickSearch": false,
-            "key": "1699239310687_47665",
+            "key": "1758534606820_59181",
             "headerAlign": "center",
             "align": "left",
             "type": "select",
@@ -1178,11 +1222,49 @@
             "tagColorList": []
           },
           {
+            "prop": "consignorName",
+            "label": "货主名称",
+            "dataType": "string",
+            "sortable": false,
+            "hidden": true,
+            "isQuickSearch": false,
+            "key": "1758534640272_2825",
+            "headerAlign": "center",
+            "align": "left",
+            "tagColorList": [],
+            "type": "table-select",
+            "options": {
+              "width": "100%",
+              "defaultValue": "",
+              "multiple": false,
+              "disabled": false,
+              "clearable": false,
+              "placeholder": "",
+              "required": false,
+              "showLabel": true,
+              "noLabel": false,
+              "columns": [
+                {
+                  "label": "货主编号",
+                  "prop": "consignorCode",
+                  "width": 100
+                },
+                {
+                  "prop": "consignorName",
+                  "label": "货主名称",
+                  "width": 150
+                }
+              ],
+              "url": "/basic/base/consignor/getList",
+              "searchFields": "consignorId,consignorCode,consignorName"
+            }
+          },
+          {
             "prop": "providerShortName",
             "label": "供应商",
             "dataType": "string",
             "sortable": false,
-            "hidden": false,
+            "hidden": true,
             "isQuickSearch": false,
             "key": "1699239336339_13355",
             "headerAlign": "center",
@@ -1527,7 +1609,6 @@
               "required": false,
               "readonly": false,
               "disabled": false,
-              "dataType": "string",
               "pattern": "",
               "placeholder": "",
               "noLabel": false
@@ -1551,7 +1632,6 @@
               "required": false,
               "readonly": false,
               "disabled": false,
-              "dataType": "string",
               "pattern": "",
               "placeholder": "",
               "noLabel": false

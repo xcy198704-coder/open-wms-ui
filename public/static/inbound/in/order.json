@@ -823,66 +823,6 @@
         ]
       },
       {
-        "type": "select",
-        "label": "审核状态",
-        "dataType": "byte",
-        "icon": "yrt-danhangshurukuang",
-        "options": {
-          "width": "100%",
-          "defaultValue": "",
-          "multiple": false,
-          "disabled": false,
-          "clearable": false,
-          "placeholder": "",
-          "required": false,
-          "showLabel": true,
-          "noLabel": false,
-          "options": [
-            {
-              "value": "下拉框1"
-            },
-            {
-              "value": "下拉框2"
-            },
-            {
-              "value": "下拉框3"
-            }
-          ],
-          "remote": "bindDropdown",
-          "remoteOptions": [],
-          "dropdownId": 21,
-          "props": {
-            "value": "value",
-            "label": "label"
-          }
-        },
-        "prop": "auditing",
-        "sortable": false,
-        "hidden": false,
-        "isQuickSearch": false,
-        "key": "1697515006555_84994",
-        "tagColorList": [
-          {
-            "operator": "=",
-            "value": "0",
-            "color": "rgba(48, 49, 51, 1)",
-            "backgroudColor": "rgba(255, 255, 0, 1)"
-          },
-          {
-            "operator": "=",
-            "value": "2",
-            "color": "rgba(255, 255, 255, 1)",
-            "backgroudColor": "rgba(5, 200, 5, 1)"
-          },
-          {
-            "operator": "=",
-            "value": "1",
-            "color": "rgba(255, 255, 255, 1)",
-            "backgroudColor": "rgba(186, 3, 3, 1)"
-          }
-        ]
-      },
-      {
         "type": "input",
         "label": "备注",
         "dataType": "string",
