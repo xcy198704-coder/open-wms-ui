@@ -111,17 +111,17 @@ base.onDetailChange = (ref: any, val: any, row: any, field: DetailField, detailR
 // 明细添加
 const detailAdd = () => {
   let formData = masterData.value; // 主表
-  // if (!formData.consignorName) {
-  //   proxy.$message.error('请选择货主！');
-  //   return;
-  // }
-  // if (!formData.providerId) {
-  //   proxy.$message.error('请选择供应商！');
-  //   return;
-  // } else if (!formData.storageName) {
-  //   proxy.$message.error('请选择仓库！');
-  //   return;
-  // }
+  if (!formData.consignorName) {
+    proxy.$message.error('请选择货主！');
+    return;
+  }
+  if (!formData.providerId) {
+    proxy.$message.error('请选择供应商！');
+    return;
+  } else if (!formData.storageName) {
+    proxy.$message.error('请选择仓库！');
+    return;
+  }
 
   const selector = proxy.$refs['selector-dialog'];
   selector.setSearchValue('consignorId', formData.consignorId);
