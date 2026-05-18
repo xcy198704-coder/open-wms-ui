@@ -296,6 +296,16 @@
         "type": "button-group",
         "label": "按钮组",
         "buttons": [
+            {
+            "type": "button",
+            "label": "新建",
+            "options": {
+              "icon": "yrt-addplus",
+              "type": "primary",
+              "authNode": "add"
+            },
+            "key": "btn-add"
+          },
           {
             "type": "button",
             "label": "删除",
