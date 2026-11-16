@@ -1194,7 +1194,6 @@ const LoadData = async (row: any) => {
   const url = '/outbound/out/orderDetail/pageList';
   const params = {
     isAsc: 'desc',
-    menuId: 1650,
     orderByColumn: 'orderDetailId',
     pageIndex: row.listDataOptions.pageIndex,
     pageSize: row.listDataOptions.pageSize,

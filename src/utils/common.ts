@@ -16,7 +16,7 @@ const userStore = useUserStore(pinia);
 export default {
   domain: process.env.NODE_ENV === 'production' ? 'http://dev-api.iwms.xin' : 'http://127.0.0.1:7001', // API接口地址
   templateDomain: '', // window.templateDomain, // 模板下载地址
-  ureportDomain: '', // "http://39.99.242.248:8089", // 报表设计器
+  ireportDomain: '', // "http://39.99.242.248:8089", // 报表设计器
   ossDomain: '', // window.templateDomain, // 国内oss
   headers: {},
   /**
