@@ -102,7 +102,7 @@
 import { reactive, ComponentInternalInstance, getCurrentInstance } from 'vue';
 import { BaseProperties } from '/@/types/base-type';
 import { postData } from '/@/api/common/baseApi';
-import { ElTable } from 'element-plus';
+import type { ElTable } from 'element-plus';
 import to from 'await-to-js';
 import { QueryBo, QueryType, DataType, OrderItem, OrderByType } from '/@/types/common';
 import useUserStore from '/@/stores/modules/user';

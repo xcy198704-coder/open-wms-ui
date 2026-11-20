@@ -122,7 +122,7 @@
 <script setup name="system-monitor-cache" lang="ts">
 import { ComponentInternalInstance, getCurrentInstance } from 'vue';
 import { getCache } from '/@/api/monitor/cache';
-import * as echarts from 'echarts';
+import * as echarts from '/@/utils/echarts';
 
 const cache = ref<any>({});
 const commandstats = ref();

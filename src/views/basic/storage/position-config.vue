@@ -352,7 +352,7 @@ let proxy = ins.proxy as BaseProperties;
 import useDropdownStore from '/@/stores/modules/dropdown';
 const dropdownStore = useDropdownStore();
 
-import { ClickOutside as vClickOutside } from 'element-plus';
+import vClickOutside from 'element-plus/es/directives/click-outside/index';
 const buttonRef: any = ref();
 const popoverRef = ref();
 const onClickOutside = () => {

@@ -7,16 +7,59 @@ import { HttpStatus } from '/@/enums/RespEnum';
 import { errorCode } from '/@/utils/errorCode';
 import { LoadingInstance } from 'element-plus/es/components/loading/src/loading';
 import FileSaver from 'file-saver';
-import { ElLoading, ElMessage, ElMessageBox, ElNotification } from 'element-plus';
+import ElLoading from 'element-plus/es/components/loading/index';
+import { ElMessage } from 'element-plus/es/components/message/index';
+import { ElMessageBox } from 'element-plus/es/components/message-box/index';
+import { ElNotification } from 'element-plus/es/components/notification/index';
 import { encryptBase64, encryptWithAes, generateAesKey } from '/@/utils/crypto';
 import { encrypt } from '/@/utils/jsencrypt';
 import { getLanguage } from '/@/i18n';
 import { Session } from './storage';
 import { Constants } from './constants';
 
-let requestLoadingInstance: LoadingInstance;
+let requestLoadingInstance: LoadingInstance | null = null;
 let downloadLoadingInstance: LoadingInstance;
 let isShowErrorMessage: boolean = false; // 防止重复显示错误信息
+
+// 全屏 loading 引用计数：并发请求只显示一个遮罩，全部结束才关闭；
+// 且请求在 400ms 内返回时完全不显示，避免快速接口造成"闪一下"的卡顿感
+let requestLoadingCount = 0;
+let requestLoadingTimer: ReturnType<typeof setTimeout> | null = null;
+const LOADING_DELAY = 400;
+
+const showRequestLoading = () => {
+  requestLoadingCount++;
+  if (requestLoadingCount === 1 && !requestLoadingTimer && !requestLoadingInstance) {
+    requestLoadingTimer = setTimeout(() => {
+      requestLoadingTimer = null;
+      if (requestLoadingCount > 0 && !requestLoadingInstance) {
+        requestLoadingInstance = ElLoading.service({ text: '数据处理中，请稍候', background: 'rgba(0, 0, 0, 0.3)' });
+      }
+    }, LOADING_DELAY);
+  }
+};
+
+const hideRequestLoading = () => {
+  requestLoadingCount = Math.max(0, requestLoadingCount - 1);
+  if (requestLoadingCount === 0) {
+    if (requestLoadingTimer) {
+      clearTimeout(requestLoadingTimer);
+      requestLoadingTimer = null;
+    }
+    if (requestLoadingInstance) {
+      requestLoadingInstance.close();
+      requestLoadingInstance = null;
+    }
+  }
+};
+
+// 仅回收"本次请求确实开启过 loading"的情况，避免 noLoading 请求误减计数
+const releaseRequestLoading = (config?: any) => {
+  if (config && config.__loadingShown) {
+    config.__loadingShown = false;
+    hideRequestLoading();
+  }
+};
 
 // 是否显示重新登录
 export const isRelogin = { show: false };
@@ -48,11 +91,9 @@ service.interceptors.request.use(
       config.baseURL = '';
     }
 
-    // 不显示loading提示
-    const noLoading = (config.headers || {}).noLoading === 'true';
-    if (!noLoading) {
-      requestLoadingInstance = ElLoading.service({ text: '数据处理中，请稍候', background: 'rgba(0, 0, 0, 0.3)' });
-    }
+    // 不显示loading提示（调用方有的传字符串 'true'，有的直接传布尔 true）
+    const noLoadingHeader = (config.headers || {}).noLoading;
+    const noLoading = noLoadingHeader === 'true' || noLoadingHeader === true;
     const isToken = (config.headers || {}).isToken === false;
     // 是否需要防止数据重复提交
     const isNoRepeatSubmit = (config.headers || {}).repeatSubmit === false;
@@ -112,10 +153,15 @@ service.interceptors.request.use(
     if (config.data instanceof FormData) {
       delete config.headers['Content-Type'];
     }
+    // 放在最后：被上面逻辑拦截（重复提交/token变更）的请求不会显示 loading，也就不用回收
+    if (!noLoading) {
+      showRequestLoading();
+      (config as any).__loadingShown = true;
+    }
     return config;
   },
   (error: any) => {
-    requestLoadingInstance.close();
+    releaseRequestLoading(error?.config);
     console.log(error);
     return Promise.reject(error);
   }
@@ -124,7 +170,7 @@ service.interceptors.request.use(
 // 响应拦截器
 service.interceptors.response.use(
   async (res: AxiosResponse) => {
-    requestLoadingInstance.close();
+    releaseRequestLoading(res.config);
     // 未设置状态码则默认成功状态
     const code = res.data.code || HttpStatus.SUCCESS;
     if (!res.data.msg && res.data.message) {
@@ -185,7 +231,7 @@ service.interceptors.response.use(
     }
   },
   (error: any) => {
-    requestLoadingInstance.close();
+    releaseRequestLoading(error?.config);
     let { message } = error;
     if (message == 'Network Error') {
       message = '后端接口连接异常';

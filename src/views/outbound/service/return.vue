@@ -27,7 +27,7 @@ import to from 'await-to-js';
 import YrtDataList from '/@/components/common/yrtDataList.vue';
 import { DeleteBo, DetailDataBo, DetailInfo, EditorOptions } from '/@/api/types';
 import useDropdownStore from '/@/stores/modules/dropdown';
-import { ElMessageBox } from 'element-plus';
+import { ElMessageBox } from 'element-plus/es/components/message-box/index';
 import { PositionTypeEnum } from '/@/enums/PositionTypeEnum';
 const yrtSelector = defineAsyncComponent(() => import('/@/components/common/yrtSelector.vue'));
 

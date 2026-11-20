@@ -96,7 +96,8 @@ import { TableQuery, TableVO } from '/@/api/tool/gen/types';
 import router from '/@/router';
 import importTable from './importTable.vue';
 import { ComponentInternalInstance } from 'vue';
-import { ElForm, DateModelType } from 'element-plus';
+import { ElForm } from 'element-plus/es/components/form/index';
+import type { DateModelType } from 'element-plus';
 
 const route = useRoute();
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;

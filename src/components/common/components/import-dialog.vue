@@ -47,7 +47,7 @@ import { BaseProperties, DataOptions } from '/@/types/base-type';
 import to from 'await-to-js';
 import { postData } from '/@/api/common/baseApi';
 import { globalHeaders } from '/@/utils/request';
-import { genFileId } from 'element-plus';
+import { genFileId } from 'element-plus/es/components/upload/index';
 import type { UploadInstance, ScrollbarInstance, UploadProps, UploadRawFile } from 'element-plus';
 import { DetailInfo } from '/@/api/types';
 let ins = getCurrentInstance() as ComponentInternalInstance;

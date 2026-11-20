@@ -30,7 +30,7 @@ import { BaseProperties } from '/@/types/base-type';
 import baseHook from '/@/components/hooks/baseHook';
 import to from 'await-to-js';
 import { postData } from '/@/api/common/baseApi';
-import { ElMessageBox } from 'element-plus';
+import { ElMessageBox } from 'element-plus/es/components/message-box/index';
 import { DataType, QueryBo, QueryType } from '/@/types/common';
 const SnEditorDialog = defineAsyncComponent(() => import('/@/components/common/sn-editor-dialog.vue'));
 

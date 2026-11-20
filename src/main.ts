@@ -8,12 +8,15 @@ import other from '/@/utils/other';
 // 图标选择组件
 import IconSelector from '/@/components/iconSelector/index.vue';
 
-import ElementPlus from 'element-plus';
 import '/@/theme/index.scss';
 // import VueGridLayout from 'vue-grid-layout';
 
 // 自定义指令
 import { directive } from '/@/directive/index';
+
+// Element Plus 指令（按需引入）
+import { ElLoadingDirective } from 'element-plus/es/components/loading/index';
+import { ElPopoverDirective } from 'element-plus/es/components/popover/index';
 
 // 注册插件
 import plugins from './plugins/index'; // plugins
@@ -67,6 +70,8 @@ app.config.globalProperties.animate = animate;
 app.config.globalProperties.mittBus = mitt();
 
 directive(app);
+app.directive('loading', ElLoadingDirective);
+app.directive('popover', ElPopoverDirective);
 other.elSvg(app);
 
 app.component('IconSelector', IconSelector);
@@ -77,7 +82,6 @@ app.use(VueMasonryPlugin);
 app
   .use(pinia)
   .use(router)
-  .use(ElementPlus)
   .use(i18n)
   .use(VueAxios, axios) // 全局访问axios
 

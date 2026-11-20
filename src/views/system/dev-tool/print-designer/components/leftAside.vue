@@ -153,6 +153,7 @@ import to from 'await-to-js';
 import { QueryBo, QueryType, DataType, OrderItem, OrderByType } from '/@/types/common';
 
 import { ComponentInternalInstance } from 'vue';
+import ElLoading from 'element-plus/es/components/loading/index';
 let ins = getCurrentInstance() as ComponentInternalInstance;
 let proxy = ins.proxy as BaseProperties;
 const emit = defineEmits(['update:moduleNode', 'update:detailFields', 'update:widgetFormData']);

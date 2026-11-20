@@ -20,7 +20,7 @@ import { ComponentInternalInstance, ref } from 'vue';
 import useDropdownStore from '/@/stores/modules/dropdown';
 import { BaseProperties } from '/@/types/base-type';
 import { globalHeaders } from '/@/utils/request';
-import { UploadFile } from 'element-plus';
+import type { UploadFile } from 'element-plus';
 const dropdownStore = useDropdownStore();
 
 let ins = getCurrentInstance() as ComponentInternalInstance;

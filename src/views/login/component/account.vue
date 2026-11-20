@@ -85,7 +85,8 @@
 <script setup lang="ts" name="loginAccount">
 import { reactive, computed, onMounted, ref, ComponentInternalInstance } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import { ElForm, ElMessage } from 'element-plus';
+import { ElForm } from 'element-plus/es/components/form/index';
+import { ElMessage } from 'element-plus/es/components/message/index';
 import { useI18n } from 'vue-i18n';
 import Cookies from 'js-cookie';
 import { storeToRefs } from 'pinia';
@@ -96,7 +97,7 @@ import { Session } from '/@/utils/storage';
 import { formatAxis } from '/@/utils/formatTime';
 import { NextLoading } from '/@/utils/loading';
 
-import { FormRules } from 'element-plus';
+import type { FormRules } from 'element-plus';
 import { getCodeImg, getTenantList } from '/@/api/login';
 import { encrypt, decrypt } from '/@/utils/jsencrypt';
 import { useUserStore } from '/@/stores/modules/user';

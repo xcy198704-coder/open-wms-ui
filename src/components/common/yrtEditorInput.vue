@@ -197,7 +197,7 @@ import axios from 'axios';
 import { postData } from '/@/api/common/baseApi';
 import { BaseObject, DataType, QueryBo, QueryType } from '/@/types/common';
 import { globalHeaders } from '/@/utils/request';
-import { UploadFile } from 'element-plus';
+import type { UploadFile } from 'element-plus';
 
 import useDropdownStore from '/@/stores/modules/dropdown';
 const dropdownStore = useDropdownStore();

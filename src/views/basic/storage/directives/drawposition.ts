@@ -2,7 +2,7 @@ import $ from 'jquery';
 import { DirectiveBinding } from 'vue';
 import to from 'await-to-js';
 import { postData } from '/@/api/common/baseApi';
-import { ElMessage } from 'element-plus';
+import { ElMessage } from 'element-plus/es/components/message/index';
 // import { BaseProperties } from '/@/types/base-type';
 // import { ComponentInternalInstance } from 'vue';
 // let ins = getCurrentInstance() as ComponentInternalInstance;

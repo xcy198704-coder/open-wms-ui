@@ -309,7 +309,7 @@ import { predefineColors } from '/@/utils/colorUtil';
 import to from 'await-to-js';
 import { getData, postData } from '/@/api/common/baseApi';
 import { DataType, QueryType } from '/@/types/common';
-import { UploadProps } from 'element-plus';
+import type { UploadProps } from 'element-plus';
 import { globalHeaders } from '/@/utils/request';
 let ins = getCurrentInstance() as ComponentInternalInstance;
 let proxy = ins.proxy as BaseProperties;

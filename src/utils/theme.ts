@@ -1,4 +1,4 @@
-import { ElMessage } from 'element-plus';
+import { ElMessage } from 'element-plus/es/components/message/index';
 
 /**
  * 颜色转换函数

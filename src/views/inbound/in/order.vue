@@ -107,7 +107,7 @@ import to from 'await-to-js';
 import { postData } from '/@/api/common/baseApi';
 import useNoticeStore from '/@/stores/modules/notice';
 import moment from 'moment';
-import { ElMessageBox } from 'element-plus';
+import { ElMessageBox } from 'element-plus/es/components/message-box/index';
 import { DataType, QueryBo, QueryType } from '/@/types/common';
 import { DeleteBo, DetailDataBo, DetailInfo, EditorOptions } from '/@/api/types';
 import YrtDataList from '/@/components/common/yrtDataList.vue';

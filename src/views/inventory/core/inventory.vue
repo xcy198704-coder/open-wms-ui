@@ -107,7 +107,7 @@ import baseHook from '/@/components/hooks/baseHook';
 import to from 'await-to-js';
 import { postData } from '/@/api/common/baseApi';
 import YrtDataList from '/@/components/common/yrtDataList.vue';
-import { ElMessageBox } from 'element-plus';
+import { ElMessageBox } from 'element-plus/es/components/message-box/index';
 import useDropdownStore from '/@/stores/modules/dropdown';
 import moment from 'moment';
 const detailstateFlow = defineAsyncComponent(() => import('/@/components/common/components/detailstateflow.vue'));

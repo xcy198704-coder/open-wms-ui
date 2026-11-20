@@ -116,7 +116,6 @@ import { postData } from '/@/api/common/baseApi';
 import to from 'await-to-js';
 import moment from 'moment';
 import scanHook from '/@/components/hooks/scanHook';
-import { ElMenu } from 'element-plus';
 const ScanSettingDialog = defineAsyncComponent(() => import('/@/components/common/components/scanSettingDialog.vue'));
 let ins = getCurrentInstance() as ComponentInternalInstance;
 let proxy = ins.proxy as BaseProperties;

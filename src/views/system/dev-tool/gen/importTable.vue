@@ -65,7 +65,8 @@
 import { listDbTable, importTable, getDataNames } from '/@/api/tool/gen';
 import { DbTableQuery, DbTableVO } from '/@/api/tool/gen/types';
 import { ComponentInternalInstance } from 'vue';
-import { ElTable, ElForm } from 'element-plus';
+import { ElTable } from 'element-plus/es/components/table/index';
+import { ElForm } from 'element-plus/es/components/form/index';
 import { BaseProperties } from '/@/types/base-type';
 import { postData } from '/@/api/common/baseApi';
 

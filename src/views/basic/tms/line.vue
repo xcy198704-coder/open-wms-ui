@@ -30,6 +30,7 @@ let ins = getCurrentInstance() as ComponentInternalInstance;
 let proxy = ins.proxy as BaseProperties;
 import to from 'await-to-js';
 import { postData } from '/@/api/common/baseApi';
+import { ElMessageBox } from 'element-plus/es/components/message-box/index';
 const base = baseHook();
 const { baseState, dataListRefName, editorRefName, editorInfo, masterData } = base;
 

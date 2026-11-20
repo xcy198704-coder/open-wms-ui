@@ -43,7 +43,8 @@
 
 <script setup lang="ts" name="systemDic">
 import { defineAsyncComponent, reactive, onMounted, ref } from 'vue';
-import { ElMessageBox, ElMessage } from 'element-plus';
+import { ElMessageBox } from 'element-plus/es/components/message-box/index';
+import { ElMessage } from 'element-plus/es/components/message/index';
 
 // 引入组件
 const DicDialog = defineAsyncComponent(() => import('/@/views/system/dic/dialog.vue'));

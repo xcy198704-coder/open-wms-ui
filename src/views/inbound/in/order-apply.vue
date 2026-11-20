@@ -49,7 +49,7 @@
 
 <script setup lang="ts" name="inbound-in-order-apply">
 import { ComponentInternalInstance } from 'vue';
-import { ElMessageBox } from 'element-plus';
+import { ElMessageBox } from 'element-plus/es/components/message-box/index';
 
 import { BaseProperties, DetailField } from '/@/types/base-type';
 import YrtDataList from '/@/components/common/yrtDataList.vue';

@@ -4,6 +4,8 @@ import { getToken } from '/@/utils/auth';
 import errorCode from '/@/utils/errorCode';
 import { blobValidate } from '/@/utils/ruoyi';
 import { LoadingInstance } from 'element-plus/es/components/loading/src/loading';
+import ElLoading from 'element-plus/es/components/loading/index';
+import { ElMessage } from 'element-plus/es/components/message/index';
 
 const baseURL = import.meta.env.VITE_APP_BASE_API;
 let downloadLoadingInstance: LoadingInstance;

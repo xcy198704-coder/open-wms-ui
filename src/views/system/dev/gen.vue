@@ -61,7 +61,7 @@ import { QueryBo, QueryType, DataType, OrderItem, OrderByType } from '/@/types/c
 import { postData, getData } from '/@/api/common/baseApi';
 import { listTable, synchDb } from '/@/api/tool/gen';
 import { TableQuery, TableVO } from '/@/api/tool/gen/types';
-import { ElForm, DateModelType } from 'element-plus';
+import type { DateModelType } from 'element-plus';
 
 const splitPane = defineAsyncComponent(() => import('/@/components/splitPane/index.vue'));
 import yrtEditor from '/@/components/common/yrtEditor.vue';

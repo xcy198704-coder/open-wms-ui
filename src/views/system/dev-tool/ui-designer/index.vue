@@ -225,6 +225,7 @@ let masterTableTtem = ref();
 import { fieldComponents, basicComponents, layoutComponents, advanceComponents, buttonComponents, defaultDataListButtons } from './componentsConfig.js';
 import { loadJs } from './util/index.js';
 import { generateMixinCode, generateMainCode } from './generateMixinCode.js';
+import ElLoading from 'element-plus/es/components/loading/index';
 
 //#region 定义变量
 const state = reactive({

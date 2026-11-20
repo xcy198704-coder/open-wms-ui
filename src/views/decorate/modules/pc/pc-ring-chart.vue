@@ -12,7 +12,7 @@ import { reactive, toRefs, getCurrentInstance, computed } from 'vue';
 import { to } from 'await-to-js';
 import { ComponentInternalInstance } from 'vue';
 import { BaseProperties } from '/@/types/base-type';
-import * as echarts from 'echarts';
+import * as echarts from '/@/utils/echarts';
 import { useThemeConfig } from '/@/stores/themeConfig';
 const storesThemeConfig = useThemeConfig();
 const { themeConfig } = storeToRefs(storesThemeConfig);

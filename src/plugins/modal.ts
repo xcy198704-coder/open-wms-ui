@@ -1,4 +1,8 @@
-import { ElMessage, ElMessageBox, ElNotification, ElLoading, MessageBoxData } from 'element-plus';
+import { ElMessage } from 'element-plus/es/components/message/index';
+import { ElMessageBox } from 'element-plus/es/components/message-box/index';
+import { ElNotification } from 'element-plus/es/components/notification/index';
+import ElLoading from 'element-plus/es/components/loading/index';
+import type { MessageBoxData } from 'element-plus';
 import { LoadingInstance } from 'element-plus/es/components/loading/src/loading';
 let loadingInstance: LoadingInstance;
 export default {

@@ -32,7 +32,7 @@ import { BaseProperties } from '/@/types/base-type';
 import { ComponentInternalInstance } from 'vue';
 let ins = getCurrentInstance() as ComponentInternalInstance;
 let proxy = ins.proxy as BaseProperties;
-import { ElMessageBox } from 'element-plus';
+import { ElMessageBox } from 'element-plus/es/components/message-box/index';
 import { postData } from '/@/api/common/baseApi';
 import to from 'await-to-js';
 

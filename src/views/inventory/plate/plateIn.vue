@@ -38,7 +38,7 @@ const dropdownStore = useDropdownStore();
 const base = baseHook();
 import to from 'await-to-js';
 const LogisticsCostDialog = defineAsyncComponent(() => import('./components/logisticsCostDialog.vue'));
-import { ElMessageBox } from 'element-plus';
+import { ElMessageBox } from 'element-plus/es/components/message-box/index';
 const { baseState, dataListRefName, editorRefName, editorInfo, masterData } = base;
 
 //#region 定义变量

@@ -46,7 +46,8 @@
 
 <script setup lang="ts" name="systemDept">
 import { defineAsyncComponent, ref, reactive, onMounted } from 'vue';
-import { ElMessageBox, ElMessage } from 'element-plus';
+import { ElMessageBox } from 'element-plus/es/components/message-box/index';
+import { ElMessage } from 'element-plus/es/components/message/index';
 
 // 引入组件
 const DeptDialog = defineAsyncComponent(() => import('/@/views/system/dept/dialog.vue'));

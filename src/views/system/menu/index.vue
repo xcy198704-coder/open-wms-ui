@@ -60,7 +60,8 @@
 <script setup lang="ts" name="systemMenu">
 import { defineAsyncComponent, ref, onMounted, reactive } from 'vue';
 import { RouteRecordRaw } from 'vue-router';
-import { ElMessageBox, ElMessage } from 'element-plus';
+import { ElMessageBox } from 'element-plus/es/components/message-box/index';
+import { ElMessage } from 'element-plus/es/components/message/index';
 import { storeToRefs } from 'pinia';
 import { useRoutesList } from '/@/stores/routesList';
 // import { setBackEndControlRefreshRoutes } from "/@/router/backEnd";

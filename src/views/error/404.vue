@@ -26,6 +26,7 @@ import { useRouter } from 'vue-router';
 import { useI18n } from 'vue-i18n';
 import { useUserStore } from '/@/stores/modules/user';
 import { Session, Local } from '/@/utils/storage';
+import { ElMessageBox } from 'element-plus/es/components/message-box/index';
 
 const userStore = useUserStore();
 const route = useRoute();

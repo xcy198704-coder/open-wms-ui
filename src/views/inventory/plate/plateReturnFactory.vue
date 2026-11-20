@@ -21,7 +21,7 @@ import useDropdownStore from '/@/stores/modules/dropdown';
 const dropdownStore = useDropdownStore();
 const base = baseHook();
 const { baseState, dataListRefName, editorRefName, editorInfo, masterData } = base;
-import { ElMessageBox } from 'element-plus';
+import { ElMessageBox } from 'element-plus/es/components/message-box/index';
 import to from 'await-to-js';
 
 //#region 定义变量

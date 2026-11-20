@@ -354,7 +354,7 @@ import draggableResizable from '/@/components/base/draggable-resizable/index.js'
 import VueBarcode from '/@/utils/vue-barcode.js';
 import VueQrcode from '@chenfengyuan/vue-qrcode';
 import { globalHeaders } from '/@/utils/request.js';
-import { UploadFile } from 'element-plus';
+import type { UploadFile } from 'element-plus';
 
 //#region 定义属性
 const props = defineProps({

@@ -16,7 +16,7 @@ import { formatAxis } from '/@/utils/formatTime';
 import { useRoute, useRouter } from 'vue-router';
 import { getCodeImg } from '/@/api/login';
 import { useI18n } from 'vue-i18n';
-import { ElMessageBox } from 'element-plus';
+import { ElMessageBox } from 'element-plus/es/components/message-box/index';
 import { Session, Local } from '/@/utils/storage';
 import { useRoutesList } from '/@/stores/routesList';
 import pinia from '/@/stores/index';

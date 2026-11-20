@@ -60,7 +60,7 @@
 <script setup lang="ts" name="home">
 import { reactive, onMounted, ref, watch, nextTick, onActivated, markRaw, ComponentInternalInstance } from 'vue';
 import { BaseProperties } from '/@/types/base-type';
-import * as echarts from 'echarts';
+import * as echarts from '/@/utils/echarts';
 import { storeToRefs } from 'pinia';
 import { useThemeConfig } from '/@/stores/themeConfig';
 import { useTagsViewRoutes } from '/@/stores/tagsViewRoutes';

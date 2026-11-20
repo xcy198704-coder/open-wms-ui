@@ -5,6 +5,7 @@ import { getPageConfig, postData } from '../../api/common/baseApi';
 import useDropdownStore from '/@/stores/modules/dropdown';
 import useAuthNode from '/@/stores/modules/authNode';
 import to from 'await-to-js';
+import { ElMessageBox } from 'element-plus/es/components/message-box/index';
 import { DetailInfo } from '/@/api/types';
 const dropdownStore = useDropdownStore();
 const authNodeStore = useAuthNode();

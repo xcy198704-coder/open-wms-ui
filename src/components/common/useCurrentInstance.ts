@@ -2,7 +2,7 @@ import { ComponentInternalInstance, getCurrentInstance } from "vue";
 // 通用方法加载
 import common from "/@/utils/common";
 import { Emitter } from "mitt";
-import { Message } from "element-plus";
+import type { Message } from "element-plus";
 
 export default function useCurrentInstance() {
 	const { appContext } = getCurrentInstance() as ComponentInternalInstance;

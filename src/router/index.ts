@@ -1,5 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import NProgress from 'nprogress';
+import { ElMessageBox } from 'element-plus/es/components/message-box/index';
+import { ElMessage } from 'element-plus/es/components/message/index';
 import 'nprogress/nprogress.css';
 import pinia from '/@/stores/index';
 import { storeToRefs } from 'pinia';

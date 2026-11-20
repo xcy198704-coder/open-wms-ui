@@ -18,7 +18,7 @@
 </template>
 
 <script setup lang="ts">
-import { TransferKey } from 'element-plus';
+import type { TransferKey } from 'element-plus';
 import { PropType } from 'vue';
 
 const props = defineProps({

@@ -83,7 +83,9 @@
 import { defineAsyncComponent, ref, unref, computed, reactive, onMounted, ComponentInternalInstance, getCurrentInstance } from 'vue';
 import { BaseProperties } from '/@/types/base-type';
 import { useRouter } from 'vue-router';
-import { ElMessageBox, ElMessage, ClickOutside as vClickOutside } from 'element-plus';
+import { ElMessageBox } from 'element-plus/es/components/message-box/index';
+import { ElMessage } from 'element-plus/es/components/message/index';
+import vClickOutside from 'element-plus/es/directives/click-outside/index';
 import screenfull from 'screenfull';
 import { useI18n } from 'vue-i18n';
 import { storeToRefs } from 'pinia';

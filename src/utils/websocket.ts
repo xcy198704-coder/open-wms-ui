@@ -19,7 +19,7 @@
  */
 
 import { getToken } from '/@/utils/auth';
-import { ElNotification } from 'element-plus';
+import { ElNotification } from 'element-plus/es/components/notification/index';
 import useNoticeStore from '/@/stores/modules/notice';
 import { isJSON } from './ruoyi';
 import { Session } from './storage';

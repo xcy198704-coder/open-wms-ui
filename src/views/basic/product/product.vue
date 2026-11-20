@@ -27,7 +27,7 @@ const yrtEditor = defineAsyncComponent(() => import('/@/components/common/yrtEdi
 const createSecurityDialog = defineAsyncComponent(() => import('./components/create-security-dialog.vue'));
 let ins = getCurrentInstance() as ComponentInternalInstance;
 let proxy = ins.proxy as BaseProperties;
-import { ElMessageBox } from 'element-plus';
+import { ElMessageBox } from 'element-plus/es/components/message-box/index';
 import { postData } from '/@/api/common/baseApi';
 import to from 'await-to-js';
 

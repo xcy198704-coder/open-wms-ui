@@ -1,5 +1,7 @@
 import { v4 as uuidv4 } from 'uuid';
-import { ElLoading, ElNotification, ElMessage } from 'element-plus';
+import ElLoading from 'element-plus/es/components/loading/index';
+import { ElNotification } from 'element-plus/es/components/notification/index';
+import { ElMessage } from 'element-plus/es/components/message/index';
 import dayjs from 'dayjs';
 import format from 'number-format.js';
 import useDropdownStore from '../stores/modules/dropdown';

@@ -30,6 +30,7 @@ import { postData } from '/@/api/common/baseApi';
 import useDropdownStore from '/@/stores/modules/dropdown';
 const dropdownStore = useDropdownStore();
 import to from 'await-to-js';
+import { ElMessageBox } from 'element-plus/es/components/message-box/index';
 
 const base = baseHook();
 const { baseState, dataListRefName, editorRefName, editorInfo, masterData } = base;

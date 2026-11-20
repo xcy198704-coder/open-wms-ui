@@ -80,7 +80,6 @@ import yrtSelector from '/@/components/common/yrtSelector.vue';
 import { reactive, ComponentInternalInstance, getCurrentInstance } from 'vue';
 import { BaseProperties } from '/@/types/base-type';
 import { postData } from '/@/api/common/baseApi';
-import { ElTable } from 'element-plus';
 import to from 'await-to-js';
 import { DataType, OrderByType, OrderItem, QueryBo, QueryType } from '/@/types/common';
 let ins = getCurrentInstance() as ComponentInternalInstance;

@@ -34,7 +34,6 @@
 import { reactive, ComponentInternalInstance, getCurrentInstance } from 'vue';
 import { BaseProperties } from '/@/types/base-type';
 import { postData } from '/@/api/common/baseApi';
-import { ElTable } from 'element-plus';
 import to from 'await-to-js';
 let ins = getCurrentInstance() as ComponentInternalInstance;
 let proxy = ins.proxy as BaseProperties;
