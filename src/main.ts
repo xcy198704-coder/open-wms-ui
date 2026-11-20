@@ -11,6 +11,14 @@ import IconSelector from '/@/components/iconSelector/index.vue';
 import '/@/theme/index.scss';
 // import VueGridLayout from 'vue-grid-layout';
 
+// Element Plus 按组件样式由 unplugin-vue-components 自动注入，
+// 服务类组件与指令不经过模板解析，这里显式引入样式
+import 'element-plus/es/components/message/style/css';
+import 'element-plus/es/components/message-box/style/css';
+import 'element-plus/es/components/notification/style/css';
+import 'element-plus/es/components/loading/style/css';
+import 'element-plus/es/components/popover/style/css';
+
 // 自定义指令
 import { directive } from '/@/directive/index';
 
