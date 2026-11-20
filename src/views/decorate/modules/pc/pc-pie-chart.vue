@@ -13,6 +13,7 @@ import { to } from 'await-to-js';
 import { ComponentInternalInstance } from 'vue';
 import { BaseProperties } from '/@/types/base-type';
 import * as echarts from '/@/utils/echarts';
+import { onBoardRefresh } from '/@/utils/boardRefresh';
 import { useThemeConfig } from '/@/stores/themeConfig';
 const storesThemeConfig = useThemeConfig();
 const { themeConfig } = storeToRefs(storesThemeConfig);
@@ -162,6 +163,18 @@ const initEchartsResizeFun = () => {
 const initEchartsResize = () => {
 	window.addEventListener('resize', initEchartsResizeFun);
 };
+
+// 看板定时刷新：重新拉取本组件数据
+let boardRefreshing = false;
+onBoardRefresh(async () => {
+	if (boardRefreshing) return;
+	boardRefreshing = true;
+	try {
+		await onSearch();
+	} finally {
+		boardRefreshing = false;
+	}
+});
 </script>
 
 <style lang="scss" scoped>

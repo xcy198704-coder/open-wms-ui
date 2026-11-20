@@ -31,6 +31,7 @@ import { to } from 'await-to-js';
 import { ComponentInternalInstance } from 'vue';
 import { BaseProperties } from '/@/types/base-type';
 import { postData } from '/@/api/common/baseApi';
+import { onBoardRefresh } from '/@/utils/boardRefresh';
 import pcHeader from '../components/pc-header.vue';
 
 let ins = getCurrentInstance() as ComponentInternalInstance;
@@ -86,6 +87,18 @@ const onSearch = async () => {
 		}
 	}
 };
+
+// 看板定时刷新：重新拉取本组件数据
+let boardRefreshing = false;
+onBoardRefresh(async () => {
+	if (boardRefreshing) return;
+	boardRefreshing = true;
+	try {
+		await onSearch();
+	} finally {
+		boardRefreshing = false;
+	}
+});
 </script>
 
 <style lang="scss" scoped>

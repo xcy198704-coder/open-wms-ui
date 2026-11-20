@@ -14,9 +14,12 @@ import centerPanel from '/@/views/decorate/components/centerPanel.vue';
 import { BaseObject, DataType, QueryType, QueryBo, PageListBo } from '/@/types/common';
 import to from 'await-to-js';
 import { postData } from '/@/api/common/baseApi';
+import { useBoardRefresh } from '/@/utils/boardRefresh';
 
 const route = useRoute();
 let ins = getCurrentInstance() as ComponentInternalInstance;
+// 看板自动刷新（默认 30s）：数据变化自动上屏，同时让登录态保持活跃
+useBoardRefresh();
 let proxy = ins.proxy as BaseProperties;
 
 const storesTagsViewRoutes = useTagsViewRoutes();
