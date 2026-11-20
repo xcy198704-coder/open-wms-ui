@@ -1,0 +1,15 @@
+易软通开源 openWMS 前端（open-wms-ui）
+
+Copyright 2024 易软通 (yiruantong)
+上游项目：https://gitee.com/yiruantong/open-wms-ui
+
+This product includes software developed at 易软通 (https://gitee.com/yiruantong).
+
+本仓库是上游项目的修改版本（fork），主要修改内容：
+  1. 请求全屏 loading 改为引用计数 + 400 ms 延迟，并修复 noLoading 判断
+  2. Element Plus / echarts 改为按需引入，减小生产包体积
+  3. 移除侧边栏 logo 与顶部租户标题
+  4. 登录页插图由 PNG 改为压缩后的 JPEG
+
+原作品采用 Apache License 2.0 授权，本修改版本同样以 Apache License 2.0 发布，
+许可证全文见本仓库 LICENSE 文件。修改内容与贡献者名单见 CONTRIBUTORS.md。

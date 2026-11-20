@@ -100,3 +100,22 @@ npm run build
 <a href="http://qm.qq.com/cgi-bin/qm/qr?_wv=1027&k=g035KL0OrSeWwWqxKmCDSkQgxGRA9PaW&authKey=Va2o57thdynX1XdLMvpkYPPiWAKrJc6gESRHPOwtAiGLW%2BrMqvB3iE6cH1LJ9s0X&noverify=0&group_code=835488048" target="_blank">点击链接加入群聊【易软通openWMS沟通群】</a>
 <br/>
 <img src="images/temp_qrcode_share_835488048.png" width="350px" />
+
+---
+
+# 关于本仓库（fork 说明）
+
+本仓库是 **易软通 openWMS 前端**（<https://gitee.com/yiruantong/open-wms-ui>）的修改版本，
+遵循上游 Apache License 2.0，保留原始版权与署名。
+
+**上游作者 / 版权方：** 易软通（yiruantong）— https://gitee.com/yiruantong/open-wms
+
+**本 fork 的主要修改：**
+
+1. 请求全屏 loading 改为引用计数 + 400 ms 延迟，并修复 `noLoading` 布尔判断（快请求不再闪遮罩）
+2. Element Plus / echarts 改为按需引入（echarts chunk 822 KB → 362 KB，首屏传输 1916 KB → 1702 KB）
+3. 移除侧边栏 logo 与顶部租户标题，界面更简洁
+4. 登录页插图 PNG 375 KB → JPEG 62 KB
+
+完整贡献者名单见 [CONTRIBUTORS.md](./CONTRIBUTORS.md)，许可证见 [LICENSE](./LICENSE)，
+修改声明见 [NOTICE](./NOTICE)。
