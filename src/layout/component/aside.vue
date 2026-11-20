@@ -1,7 +1,6 @@
 <template>
   <div class="h100" v-show="!isTagsViewCurrenFull">
     <el-aside class="layout-aside" :class="setCollapseStyle">
-      <Logo v-if="setShowLogo" />
       <el-scrollbar class="flex-auto" ref="layoutAsideScrollbarRef" @mouseenter="onAsideEnterLeave(true)"
         @mouseleave="onAsideEnterLeave(false)">
         <Vertical :menuList="state.menuList" />
@@ -11,15 +10,13 @@
 </template>
 
 <script setup lang="ts" name="layoutAside">
-import { defineAsyncComponent, reactive, computed, watch, onBeforeMount, ref } from 'vue';
-import { storeToRefs } from 'pinia';
+import { defineAsyncComponent, reactive, computed, watch, onBeforeMount, ref } from 'vue';import { storeToRefs } from 'pinia';
 import { useRoutesList } from '/@/stores/routesList';
 import { useThemeConfig } from '/@/stores/themeConfig';
 import { useTagsViewRoutes } from '/@/stores/tagsViewRoutes';
 import mittBus from '/@/utils/mitt';
 
 // 引入组件
-const Logo = defineAsyncComponent(() => import('/@/layout/logo/index.vue'));
 const Vertical = defineAsyncComponent(() => import('/@/layout/navMenu/vertical.vue'));
 
 // 定义变量内容
@@ -68,10 +65,6 @@ const setCollapseStyle = computed(() => {
   }
 });
 // 设置显示/隐藏 logo
-const setShowLogo = computed(() => {
-  let { layout, isShowLogo } = themeConfig.value;
-  return (isShowLogo && layout === 'defaults') || (isShowLogo && layout === 'columns');
-});
 // 关闭移动端蒙版
 const closeLayoutAsideMobileMode = () => {
   const el = document.querySelector('.layout-aside-mobile-mode');

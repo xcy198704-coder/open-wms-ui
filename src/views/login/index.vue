@@ -72,7 +72,7 @@ import { defineAsyncComponent, onMounted, reactive, computed, ComponentInternalI
 import { storeToRefs } from 'pinia';
 import { useThemeConfig } from '/@/stores/themeConfig';
 import { NextLoading } from '/@/utils/loading';
-import loginMain from '/@/assets/login-main.png';
+import loginMain from '/@/assets/login-main.jpg';
 import loginBg from '/@/assets/login-bg.svg';
 const RegDialog = defineAsyncComponent(() => import('./component/reg-dialog.vue'));
 const MerDialog = defineAsyncComponent(() => import('./component/mer-dialog.vue'));

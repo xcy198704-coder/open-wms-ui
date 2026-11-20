@@ -15,7 +15,6 @@
         </transition-group>
       </el-breadcrumb>
     </div>
-    <div class="sys-full-name">{{ sysFullName }}</div>
   </div>
 </template>
 
@@ -55,9 +54,6 @@ const isShowBreadcrumb = computed(() => {
   else return isBreadcrumb ? true : false;
 });
 
-const sysFullName = computed(() => {
-  return userStore.sysFullName + '(' + userStore.tenantId + ')';
-});
 
 // 面包屑点击时
 const onBreadcrumbClick = (v: RouteItem) => {
@@ -151,16 +147,5 @@ onBeforeRouteUpdate((to) => {
       color: var(--el-color-primary) !important;
     }
   }
-}
-.sys-full-name {
-  height: 50px;
-  line-height: 50px;
-  font-size: 20px;
-  text-align: center;
-  letter-spacing: 3px;
-  animation: logoAnimation 0.3s ease;
-  animation-delay: 0.3s;
-  color: #949494;
-  margin-right: 20px;
 }
 </style>
