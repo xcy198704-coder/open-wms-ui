@@ -8,7 +8,10 @@
   - 前端仓库：https://gitee.com/yiruantong/open-wms-ui
   - 后端仓库：https://gitee.com/yiruantong/open-wms
   - 官网：https://www.wms.kim/
-- **xtb &lt;53901784@qq.com&gt;** — 上游前端仓库初始提交作者
+- **谢天宝（xtb / xietianbao80）** — 上游前端作者
+  - GitHub：https://github.com/xietianbao80
+  - Gitee 提交邮箱：53901784@qq.com
+  - 上游历史提交保留在本仓库中，GitHub 贡献者列表可见
 
 ## 本仓库（fork）修改
 
