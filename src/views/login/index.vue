@@ -1,13 +1,6 @@
 <template>
   <div class="login-container flex">
     <div class="login-left" :style="{ 'background-color': getBgColor() }">
-      <div class="login-left-logo">
-        <img :src="userStore.tenantInfo.logoLong" />
-        <!-- <div class="login-left-logo-text">
-					<span>{{ userStore.tenantInfo.sysFullName }}</span>
-					<span class="login-left-logo-text-msg">{{ userStore.tenantInfo.sysShortName }}</span>
-				</div> -->
-      </div>
       <div class="login-left-img">
         <img :src="userStore.tenantInfo.expandFields?.bigPic || loginMain" />
       </div>
@@ -37,7 +30,6 @@
         <span class="login-right-warp-one"></span>
         <span class="login-right-warp-two"></span>
         <div class="login-right-warp-mian">
-          <div class="login-right-warp-main-title">{{ userStore.tenantInfo.sysFullName }}</div>
           <div class="login-right-warp-main-form">
             <div v-if="!state.isScan">
               <el-tabs v-model="state.tabsActiveName">
@@ -125,31 +117,6 @@ onMounted(async () => {
     position: relative;
     background-color: #95b7e4;
     margin-right: 100px;
-    .login-left-logo {
-      display: flex;
-      align-items: center;
-      position: absolute;
-      top: 50px;
-      left: 80px;
-      z-index: 1;
-      animation: logoAnimation 0.3s ease;
-      img {
-        height: 60px;
-      }
-      .login-left-logo-text {
-        display: flex;
-        flex-direction: column;
-        span {
-          margin-left: 10px;
-          font-size: 28px;
-          color: #26a59a;
-        }
-        .login-left-logo-text-msg {
-          font-size: 12px;
-          color: #32a99e;
-        }
-      }
-    }
     .login-left-img {
       position: absolute;
       top: 50%;
@@ -236,23 +203,10 @@ onMounted(async () => {
       .login-right-warp-mian {
         display: flex;
         flex-direction: column;
+        justify-content: center;
         height: 100%;
-        .login-right-warp-main-title {
-          height: 130px;
-          line-height: 130px;
-          font-size: 27px;
-          text-align: center;
-          letter-spacing: 3px;
-          animation: logoAnimation 0.3s ease;
-          animation-delay: 0.3s;
-          color: var(--el-text-color-primary);
-          background: var(--Gradient, linear-gradient(90deg, #02c980 10%, #01b6ce 50%));
-          background-clip: text;
-          -webkit-background-clip: text;
-          -webkit-text-fill-color: transparent;
-        }
         .login-right-warp-main-form {
-          flex: 1;
+          flex: none;
           padding: 0 50px 50px;
           .login-content-main-scan {
             position: absolute;
