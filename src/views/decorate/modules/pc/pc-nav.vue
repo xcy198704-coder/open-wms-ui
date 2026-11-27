@@ -31,7 +31,7 @@
 					<div class="items">
 						<template v-for="(item, index2) in getCurrentPage(index)">
 							<div class="item" :style="{ width: 100 / config.style.showCount + '%', 'margin-bottom': config.style.iconMargin + 'px' }" @click="goUrl(item.url)">
-								<div style="{ width: (config.style?.iconSize === undefined ? 60 : config.style?.iconSize) + 'px', height: (config.style?.iconSize === undefined ? 60 : config.style?.iconSize) + 'px', 'border-radius': config.style?.iconStyle === '圆形' ? (config.style?.iconSize || 60) / 2 + 'px' : '' }">
+								<div class="nav-icon" :style="{ width: (config.style?.iconSize === undefined ? 60 : config.style?.iconSize) + 'px', height: (config.style?.iconSize === undefined ? 60 : config.style?.iconSize) + 'px', 'border-radius': config.style?.iconStyle === '圆形' ? (config.style?.iconSize || 60) / 2 + 'px' : '' }">
 									<svg-icon :name="item.icon" :size="config.style.iconSize" :color="item.iconColor"></svg-icon>
 								</div>
 								<div class="name" :style="{ 'font-size': (config.style?.fontSize === undefined ? 12 : config.style?.fontSize) + 'px', color: config.style?.fontColor, 'line-height': config.style.lineHeight + 'px' }">{{ item.name }}</div>
@@ -242,12 +242,13 @@ onMounted(() => {
 		flex-wrap: wrap;
 		overflow: hidden;
 		.item {
-			width: 25%;
 			text-align: center;
 			box-sizing: border-box;
-			width: 60px;
-			display: inline-block;
-			text-align: center;
+			.nav-icon {
+				display: inline-flex;
+				align-items: center;
+				justify-content: center;
+			}
 			.name {
 				color: var(--el-text-color-regular);
 				font-size: 12px;
